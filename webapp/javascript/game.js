@@ -318,41 +318,63 @@ function drawGameGraph(data) {
     // Here, there are buttons that will zoom to periods
     $("#1-period")
         .click(function() {
-            zoomGameGraph(data, 0, 1200, x, y, width, height, valueline);
+            zoomGameGraph(data, 0, 1200, x, y, width, height);
             $("h2#flow-title").text("1st Period Flow");
         });
     $("#2-period")
         .click(function() {
-            zoomGameGraph(data, 1200, 2400, x, y, width, height, valueline);
+            zoomGameGraph(data, 1200, 2400, x, y, width, height);
             $("h2#flow-title").text("2nd Period Flow");
         });
     $("#3-period")
         .click(function() {
-            zoomGameGraph(data, 2400, 3600, x, y, width, height, valueline);
+            zoomGameGraph(data, 2400, 3600, x, y, width, height);
             $("h2#flow-title").text("3rd Period Flow");
         });
     $("#ot-period")
         .click(function() {
-            zoomGameGraph(data, 3600, gameLength, x, y, width, height, valueline);
+            zoomGameGraph(data, 3600, gameLength, x, y, width, height);
             $("h2#flow-title").text("OT Flow");
         });
     $("#all-period")
         .click(function() {
-            zoomGameGraph(data, 0, gameLength, x, y, width, height, valueline);
+            zoomGameGraph(data, 0, gameLength, x, y, width, height);
             $("h2#flow-title").text("Game Flow");
         });
 }
 // Zooms into a period on the game graph
-
-function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
+// The main line and plot points (based on attempts)
+// will be shifted according to the starting value for a time
+// period
+function zoomGameGraph(data, start, end, x, y, width, height) {
     // Store the length of the game
     var gameLength = data.results.gameLength;
+
     // Get the new data
     var events = combineEvents(data, 'attempts', start, end);
+
+    //Apply a shift to the data. This way you can see the flow in the given
+    //time frame easier
+
+    //Get the dif at the start
+    var startDif = events[0].dif;
+
+    //The shift is the negative value of the first dif
+    var difShift = -startDif;
+
+    //Shift the data to match the time period
+    events = shiftEventsDif(events,difShift);
+
     // Get all the for goals during the time
     var forGoals = filterEvents(data.for.goals, start, end);
+
+    forGoals = shiftAttemptsDif(forGoals,difShift);
+
     // Get all the against goals for the time
     var againstGoals = filterEvents(data.against.goals, start, end);
+
+    againstGoals = shiftAttemptsDif(againstGoals,difShift);
+
     //Set the range of the data again
     //make it so the graph goes equally in the positive and negative directions
     var maxPosX = Math.abs(d3.max(events, function(d) {
@@ -372,6 +394,16 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
     }
     y.domain([start, end]);
     x.domain([negX - 3, posX + 3]);
+
+    //Create the statline
+    var valueline = d3.line()
+        .y(function(d) {
+            return y(d.time);
+        })
+        .x(function(d) {
+            return x(d.difShift);
+        });
+
     // Select the section we want to apply our changes to
     var svg = d3.select("#game-graph");
     // Re-scale the y axis. There are 4. 2 main axis (left right)
@@ -415,6 +447,7 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
         .select(".line")
         .attr("d", valueline(events))
         .duration(750);
+
     // Move the points
     // For points that are no longer in the graph, hide them,
     // and make visable again when they are in the chart area
@@ -422,7 +455,7 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
         .data(events)
     points.transition()
         .attr("transform", function(d) {
-            return "translate(" + x(d.dif) + "," + y(d.time) + ")";
+            return "translate(" + x(d.difShift) + "," + y(d.time) + ")";
         })
         .style("visibility", "visible")
         .duration(750);
@@ -438,7 +471,7 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
     forCircles.transition()
         .attr("transform", function(d) {
             return "translate(" +
-                (x(d.stats.dif.attempts) - 50) +
+                (x(d.stats.difShift) - 50) +
                 "," +
                 y(d.time) + ")";
         })
@@ -453,7 +486,7 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
     againstCircles.transition()
         .attr("transform", function(d) {
             return "translate(" +
-                (x(d.stats.dif.attempts) + 50) +
+                (x(d.stats.difShift) + 50) +
                 "," +
                 y(d.time) +
                 ")";
@@ -471,10 +504,10 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
         .data(forGoals);
     forGoalLines.transition()
         .attr("x1", function(d) {
-            return x(d.stats.dif.attempts);
+            return x(d.stats.difShift);
         })
         .attr("x2", function(d) {
-            return x(d.stats.dif.attempts) - 50;
+            return x(d.stats.difShift) - 50;
         })
         .attr("y1", function(d) {
             return y(d.time);
@@ -492,10 +525,10 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
         .data(againstGoals);
     againstGoalLines.transition()
         .attr("x1", function(d) {
-            return x(d.stats.dif.attempts);
+            return x(d.stats.difShift);
         })
         .attr("x2", function(d) {
-            return x(d.stats.dif.attempts) + 50;
+            return x(d.stats.difShift) + 50;
         })
         .attr("y1", function(d) {
             return y(d.time);
@@ -844,11 +877,27 @@ function summaryStats(data, start, end) {
 }
 //Create a ratio between 2 variables
 //If both variables a 0 return 0
-
 function calcRatio(varA, varB) {
     if (varA + varB == 0) {
         return 0;
     } else {
         return varA / (varA + varB);
     }
+}
+
+//Shift dif of events
+function shiftEventsDif(events,shift){
+
+  for(i = 0; i < events.length;i++){
+    events[i].difShift = events[i].dif + shift;
+  }
+  return events;
+}
+
+//Shift dif of a goal or attempt
+function shiftAttemptsDif(events,shift){
+  for(i = 0; i < events.length;i++){
+    events[i].stats.difShift = events[i].stats.dif.attempts + shift;
+  }
+  return events;
 }

@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>PuckLab | 2015 | EDM | 1</title>
+
+    <!-- Bootstrap -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Style -->
+    <link href="custom.css" rel="stylesheet">
+
+    <!-- Page Style -->
+    
+    <link href="game.css" rel="stylesheet">
+    
+    <link href="game-for-blue.css" rel="stylesheet">
+    
+    <link href="game-against-yellow.css" rel="stylesheet">
+    
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <!-- The navbar goes here -->
+
+    <!-- Navbar template -->
+
+<nav class="navbar navbar-custom navbar-static-top">
+    <div class="container">
+        <div class="navbar-header pull-left">
+            <div class="col-xs-5 col-sm-2 col-lg-2">
+                <a class="navbar-brand" href="\">PuckLab</a>
+            </div>
+            <div class="nav-search col-xs-6 col-sm-9 col-lg-9">
+                <div class="input-group">
+                  <div class="input-group-btn">
+                      <button class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                      </button>
+                  </div>
+                  <input type="text" class="form-control" aria-label="...">
+                </div>
+            </div>
+        </div>
+         <div class="navbar-header pull-right">
+             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-menu-hamburger nav-dropdown" aria-hidden="true"></span>
+             </a>
+             <ul class="dropdown-menu">
+                  <li><a href="#">Action</a></li>
+                  <li><a href="#">Another action</a></li>
+                  <li><a href="#">Something else here</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li class="dropdown-header">Nav header</li>
+                  <li><a href="#">Separated link</a></li>
+                  <li><a href="#">One more separated link</a></li>
+            </ul>
+        </div>
+        
+        
+       
+    </div>
+</nav>
+
+
+    <div class='container page'>
+        <!-- The game summary -->
+<div class = 'container game-summary'>
+	<div class = 'container row'>
+		<div class = 'col-xs-5 team-heading for-team'>
+				EDM -
+				
+    			
+    			AWAY
+    			
+		</div>
+		<div class = 'col-xs-2 centered'>
+
+		VS
+
+		</div>
+		<div class = 'col-xs-5 team-heading against-team'>
+				STL -
+				
+    			
+    			HOME
+    			
+		</div>
+	</div>
+	<div class = 'container row'>
+		<div class = 'col-xs-5 centered'>
+				
+    			
+    			LOSS
+    			
+
+    			(REG)
+		</div>
+		<div class = 'col-xs-2 centered'>
+			2015-10-08
+		</div>
+		<div class = 'col-xs-5 centered'>
+				
+    			WIN
+    			
+    			
+
+    			(REG)
+		</div>
+	</div>
+	<div class = 'container row'>
+		<div class = 'col-xs-5 centered'>1</div>
+		<div class = 'col-xs-2 centered'>
+
+		</div>
+		<div class = 'col-xs-5 centered'>3</div>
+
+	</div>
+
+	<!-- The game stats bar graphs-->
+	<h2 id="stats-title"> Game Stats</h2>
+	<div id='for-goals-graph' class="bar-chart">
+	</div>
+
+	<!-- The game flow graph-->
+	<h2 id="flow-title"> Game Flow</h2>
+	<div id='game-graph'>
+	</div>
+
+	<!-- The zoom toggle buttons-->
+	<div class='row'>
+
+			<div class = 'col-xs-2'>
+				Zoom To:
+			</div>
+
+			<div class = 'col-xs-10'>
+
+				<button type="button" class="btn btn-default" id="1-period">1st</button>
+				<button type="button" class="btn btn-default" id="2-period">2nd</button>
+				<button type="button" class="btn btn-default" id="3-period">3rd</button>
+				<button type="button" class="btn btn-default" id="ot-period">OT</button>
+				<button type="button" class="btn btn-default" id="all-period">All</button>
+
+			</div>
+	</div>
+</div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="jquery.min.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap.min.js"></script>
+
+    <!-- Where d3 goes scripts go -->
+    
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    
+
+    <script src="d3.tip.js"></script>
+
+    <!-- Where the page script goes scripts goes -->
+    
+    <script src='game.js'></script
+    
+
+  </body>
+</html>

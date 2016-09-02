@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab:400,700");
+h2 {
+  text-align: center;
+  font-size: 1.3em;
+}
+path {
+  stroke: #673ab7;
+  stroke-width: 2;
+  fill: none;
+}
+path.point:hover {
+  stroke: #4a148c;
+}
+.y-axis line {
+  stroke: #eeeeee;
+  shape-rendering: crispEdges;
+  stroke-width: 2;
+}
+.y-axis-sub line {
+  stroke: #eeeeee;
+  shape-rendering: crispEdges;
+  stroke-width: 1;
+}
+.y-axis-sub path,
+.y-axis path {
+  stroke: #eeeeee;
+  shape-rendering: crispEdges;
+  stroke-width: 1;
+}
+.againstTeamGoal circle {
+  fill: #f44336;
+  shape-rendering: crispEdges;
+}
+.againstTeamGoal:hover circle {
+  fill: #b71c1c;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  font-size: 1em;
+  font-family: 'Roboto Mono';
+}
+.d3-tip .title {
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+.d3-tip .centered {
+  text-align: center;
+}
+.d3-tip .stats {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+line.forTeam {
+  shape-rendering: crispEdges;
+  stroke-width: 2;
+}
+line.againstTeam {
+  stroke: #f44336;
+  shape-rendering: crispEdges;
+  stroke-width: 2;
+}
+line.periods {
+  shape-rendering: crispEdges;
+  stroke: #eeeeee;
+}
+.team-heading {
+  font-family: 'Roboto Slab';
+  font-size: 1.5em;
+  text-align: center;
+}
+.game-summary {
+  width: 100%;
+  height: 80vh;
+}
+#game-graph {
+  width: 100%;
+  height: 70%;
+}
+.bar-chart {
+  width: 100%;
+  height: 75px;
+}
+g.grid .domain {
+  display: none;
+}
+g.grid .tick line {
+  stroke: #eeeeee;
+}

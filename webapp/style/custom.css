@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab:400,700");
+/**********************
+       Color Themes
+***********************/
+/**********************
+       Basic Colors
+***********************/
+body {
+  font-family: 'Roboto Mono';
+}
+.navbar-custom {
+  border-color: #e65100;
+  background: #ffffff;
+  color: #e65100;
+}
+.navbar-custom a {
+  color: #e65100;
+}
+.navbar-custom .navbar-brand {
+  font-family: 'Roboto Slab';
+  font-weight: 700;
+  font-size: 1.5em;
+}
+.navbar-custom .pull-left {
+  width: 90%;
+}
+.navbar-custom .pull-right {
+  width: 10%;
+  text-align: right;
+}
+.navbar-custom .nav-search {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-family: 'Roboto Mono';
+}
+.navbar-custom .nav-search .btn {
+  color: #e65100;
+  padding-top: 7px;
+  border: none;
+}
+.navbar-custom .nav-dropdown {
+  margin-top: 15px;
+  margin-right: 5px;
+  font-size: 1.2em;
+}
+.form-control {
+  border-radius: 0;
+}
+.form-control:focus,
+.form-control:active {
+  border-color: #ff9800;
+}
+.centered {
+  text-align: center;
+}

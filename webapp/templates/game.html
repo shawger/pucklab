@@ -1,0 +1,89 @@
+<!-- The game summary -->
+<div class = 'container game-summary'>
+	<div class = 'container row'>
+		<div class = 'col-xs-5 team-heading for-team'>
+				{{data.for.team.abv}} -
+				{% if data.home==1 %}
+    			HOME
+    			{% endif %}
+    			{% if data.home==0 %}
+    			AWAY
+    			{% endif %}
+		</div>
+		<div class = 'col-xs-2 centered'>
+
+		VS
+
+		</div>
+		<div class = 'col-xs-5 team-heading against-team'>
+				{{data.against.team.abv}} -
+				{% if data.home==1 %}
+    			AWAY
+    			{% endif %}
+    			{% if data.home==0 %}
+    			HOME
+    			{% endif %}
+		</div>
+	</div>
+	<div class = 'container row'>
+		<div class = 'col-xs-5 centered'>
+				{% if data.results.win==1 %}
+    			WIN
+    			{% endif %}
+    			{% if data.results.win==0 %}
+    			LOSS
+    			{% endif %}
+
+    			({{data.results.type}})
+		</div>
+		<div class = 'col-xs-2 centered'>
+			{{data.date}}
+		</div>
+		<div class = 'col-xs-5 centered'>
+				{% if data.results.win==0 %}
+    			WIN
+    			{% endif %}
+    			{% if data.results.win==1 %}
+    			LOSS
+    			{% endif %}
+
+    			({{data.results.type}})
+		</div>
+	</div>
+	<div class = 'container row'>
+		<div class = 'col-xs-5 centered'>{{data.for.stats.goals.total}}</div>
+		<div class = 'col-xs-2 centered'>
+
+		</div>
+		<div class = 'col-xs-5 centered'>{{data.against.stats.goals.total}}</div>
+
+	</div>
+
+	<!-- The game stats bar graphs-->
+	<h2 id="stats-title"> Game Stats</h2>
+	<div id='for-goals-graph' class="bar-chart">
+	</div>
+
+	<!-- The game flow graph-->
+	<h2 id="flow-title"> Game Flow</h2>
+	<div id='game-graph'>
+	</div>
+
+	<!-- The zoom toggle buttons-->
+	<div class='row'>
+
+			<div class = 'col-xs-2'>
+				Zoom To:
+			</div>
+
+			<div class = 'col-xs-10'>
+
+				<button type="button" class="btn btn-default" id="1-period">1st</button>
+				<button type="button" class="btn btn-default" id="2-period">2nd</button>
+				<button type="button" class="btn btn-default" id="3-period">3rd</button>
+				<button type="button" class="btn btn-default" id="ot-period">OT</button>
+				<button type="button" class="btn btn-default" id="all-period">All</button>
+
+			</div>
+	</div>
+</div>

@@ -1,0 +1,71 @@
+
+@import "colors/colors";
+@import "font";
+
+//Set the color theme
+
+@base: @orange-base;
+@dark: @orange-dark;
+@light: @orange-light;
+    
+//Page
+
+body{
+    font-family: @normal-text;
+}
+
+//Navbar
+
+.navbar-custom{
+    border-color: @dark;
+    background: @white;
+    color: @dark;
+    
+    a {
+        color: @dark;
+    }
+    
+    .navbar-brand{
+        font-family: @title-text;
+        font-weight: 700;
+        font-size:1.5em;
+    }
+    
+    .pull-left{
+        width:90%;
+    }
+     .pull-right{
+        width:10%;
+        text-align: right;
+    }
+    
+    .nav-search{
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        font-family: @normal-text;
+        
+        .btn{
+            color: @dark;
+            padding-top: 7px;
+            border: none;
+        }
+    }
+    
+    .nav-dropdown{
+        margin-top:15px;
+        margin-right: 5px;
+        font-size: 1.2em;
+        
+    }
+}
+
+.form-control{
+    border-radius: 0;
+    &:focus, &:active {border-color:@base;}
+}
+
+.centered{
+    text-align: center;
+}

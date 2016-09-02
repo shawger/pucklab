@@ -1,0 +1,15 @@
+.againstTeamGoal circle {
+  fill: #f44336;
+}
+.againstTeamGoal:hover circle {
+  fill: #b71c1c;
+}
+line.againstTeam {
+  stroke: #f44336;
+}
+.against-team {
+  color: #b71c1c;
+}
+.against-bar {
+  fill: #ef9a9a;
+}

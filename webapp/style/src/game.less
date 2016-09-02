@@ -1,0 +1,140 @@
+@import "colors/colors";
+@import "font";
+
+@for-base: @clr-blue-500;
+@for-dark: @clr-blue-900;
+
+@against-base: @clr-red-500;
+@against-dark: @clr-red-900;
+
+@grey: @clr-grey-200;
+@black: @clr-black;
+
+h2{
+  text-align: center;
+  font-size: 1.3em;
+}
+
+
+path {
+    stroke: @clr-deep-purple-500;
+    stroke-width: 2;
+    fill: none;
+}
+
+path.point{
+	&:hover {
+			stroke: @clr-purple-900;
+		}
+}
+
+.y-axis line{
+	stroke: @grey;
+	shape-rendering: crispEdges;
+	stroke-width: 2;
+}
+
+.y-axis-sub line {
+	stroke: @grey;
+	shape-rendering: crispEdges;
+	stroke-width: 1;
+}
+
+.y-axis-sub path, .y-axis path{
+	stroke: @grey;
+	shape-rendering: crispEdges;
+	stroke-width: 1;
+}
+
+.againstTeamGoal {
+
+	circle {
+		fill: @against-base;
+		shape-rendering: crispEdges;
+	}
+
+	&:hover {
+		circle{
+			fill: @against-dark
+		}
+	}
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  font-size: 1em;
+  font-family: @normal-text;
+
+  .title {
+  	text-align: center;
+  	font-size: 1.2em;
+  	margin-bottom: 5px;
+  }
+  .centered {
+  	text-align: center;
+  }
+  .stats{
+  	margin-top:10px;
+  	font-size: 0.9em;
+  }
+}
+
+
+line.forTeam {
+	shape-rendering: crispEdges;
+	stroke-width: 2;
+}
+
+
+line.againstTeam {
+	stroke: @against-base;
+	shape-rendering: crispEdges;
+	stroke-width: 2;
+
+}
+
+line.periods {
+	shape-rendering: crispEdges;
+	stroke: @grey;
+}
+
+.team-heading{
+    font-family: @title-text;
+    font-size:1.5em;
+    text-align: center;
+}
+
+.game-summary{
+	width:100%;
+	height:80vh;
+}
+
+#game-graph{
+	width:100%;
+	height:70%;
+}
+
+.bar-chart{
+
+	width:100%;
+	height:75px;
+}
+
+g.grid{
+
+	.domain{
+		display: none;
+	}
+
+	.tick{
+
+		line{
+			stroke: @grey;
+		}
+	}
+}

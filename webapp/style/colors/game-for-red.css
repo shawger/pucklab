@@ -1,0 +1,15 @@
+.forTeamGoal circle {
+  fill: #f44336;
+}
+.forTeamGoal:hover circle {
+  fill: #b71c1c;
+}
+line.forTeam {
+  stroke: #f44336;
+}
+.for-team {
+  color: #b71c1c;
+}
+.for-bar {
+  fill: #ef9a9a;
+}

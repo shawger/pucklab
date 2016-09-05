@@ -237,6 +237,7 @@ function drawGameGraph(data) {
             .tickFormat(function(d){return Math.abs(d)}))
             .attr('transform', 'translate(0,-3)');
 
+    // Set up tooltip explaining what attempts are and how they are used
     var attemptsTip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
@@ -251,6 +252,8 @@ function drawGameGraph(data) {
 
     svg.call(attemptsTip);
 
+    // Add labels to the x axis explaing which directions represent
+    // the advantage for what team.
     svg.append("text")
             .attr("text-anchor", "middle")
             .attr("transform", "translate("+ (width/4) +",-20)")
@@ -801,7 +804,7 @@ function statsGraph(data) {
         .attr("class", "bartext")
         .attr("text-anchor", "middle")
         .attr("y", function(d) {
-            return y(d.type) + y.bandwidth() - 5;
+            return y(d.type) + y.bandwidth() - 2;
         })
         .attr("x", function(d) {
           if (d.for) {

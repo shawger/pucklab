@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>PuckLab | 2015 | EDM | 1</title>
+    <title>PuckLab | 2015 | CGY | 35</title>
 
     <!-- Bootstrap -->
     <link href="bootstrap.min.css" rel="stylesheet">
@@ -18,9 +18,9 @@
     
     <link href="game.css" rel="stylesheet">
     
-    <link href="game-for-blue.css" rel="stylesheet">
+    <link href="game-for-red.css" rel="stylesheet">
     
-    <link href="game-against-yellow.css" rel="stylesheet">
+    <link href="game-against-blue.css" rel="stylesheet">
     
 
 
@@ -41,13 +41,66 @@
 
     <div class='container page'>
         <!-- The game summary -->
+<h1>
+NHL Game Summary
+<button type="button" class="btn btn-info" data-toggle="modal" data-target="#infoModal">Info</button>
+</h1>
+
+<!-- Modal for info -->
+<div id="infoModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title centered">Info</h4>
+      </div>
+      <div class="modal-body">
+        <p>Welcome to the NHL Game Summary App.</p>
+				<p>This app is designed to visually show how a NHL hockey game went.
+					 Usaully, when looking for this information a hockey fan might check
+					 out the box score of a game, which shows stats like goals, shots
+					 and penalties. That is great if you only care about who won, but if
+					 you want to know how the game went, you need more. In many cases a hockey
+					 team could have played very well, but thanks to bad goaltending, badluck or
+					 other factors, still have lost.
+				</p>
+				<p>The Game Summary app gives a graphical representation of the game stats
+					and shows the flow of the game, which in some ways is more meaningful
+					than the final score.
+					<a href="https://www.nhl.com/news/primer-get-to-know-new-enhanced-stats-on-nhl-com/c-754260">
+					Read about advanced stats in the NHL.</a>
+				</p>
+				<p><b>Game Flow - </b> Here, game flow is represented by the difference of
+					attempts between teams. The idea is the greater difference between a teams
+					attempts and their opponents attempts means that team is playing better.
+					Usually (but not always) a bigger advantage in attempts will yield a bigger
+					advantage in goals, and thus a better chance at winning.
+				</p>
+				<p>
+					<b>Attempts - </b> An attempt is a goal, a shot, a missed shot or a shots
+					that is blocked by the other team.
+				</p>
+				<p><b>Features</b><p>
+					<p>- Zoom into differnt periods.</p>
+					<p>- Mouse over events to get detials.<p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class = 'container game-summary'>
 	<div class = 'container row'>
 		<div class = 'col-xs-5 team-heading for-team'>
-				EDM -
+				CGY -
 				
+    			HOME
     			
-    			AWAY
     			
 		</div>
 		<div class = 'col-xs-2 centered'>
@@ -56,25 +109,14 @@
 
 		</div>
 		<div class = 'col-xs-5 team-heading against-team'>
-				STL -
+				EDM -
 				
+    			AWAY
     			
-    			HOME
     			
 		</div>
 	</div>
 	<div class = 'container row'>
-		<div class = 'col-xs-5 centered'>
-				
-    			
-    			LOSS
-    			
-
-    			(REG)
-		</div>
-		<div class = 'col-xs-2 centered'>
-			2015-10-08
-		</div>
 		<div class = 'col-xs-5 centered'>
 				
     			WIN
@@ -83,9 +125,20 @@
 
     			(REG)
 		</div>
+		<div class = 'col-xs-2 centered'>
+			2015-12-27
+		</div>
+		<div class = 'col-xs-5 centered'>
+				
+    			
+    			LOSS
+    			
+
+    			(REG)
+		</div>
 	</div>
 	<div class = 'container row'>
-		<div class = 'col-xs-5 centered'>1</div>
+		<div class = 'col-xs-5 centered'>5</div>
 		<div class = 'col-xs-2 centered'>
 
 		</div>
@@ -93,73 +146,105 @@
 
 	</div>
 
-	<!-- The game stats bar graphs-->
-	<h2>
-	<span id="stats-title"> Game Stats</span>
-	<span data-toggle="tooltip"
-		title=" Game Stats are summaries of different stats
-		for both teams. For each stat the ratio of the stat
-		vs the total stats is calculated. For example:
-
-			for goal ratio = (for goals)/(for goals) + (against goals)
-
-		The ratios are shown as bar graphs for both teams.
-		The bars to the left are for EDM and the bar to
-		the right are for STL.">(i)</span>
-	</h2>
-	<div class='row'>
-		<div class='col-xs-6 centered'>
-		EDM
-		</div>
-		<div class='col-xs-6 centered'>
-		STL
-		</div>
-	</div>
-	<div id='game-stats' class="bar-chart">
-	</div>
-
 	<!-- The game flow graph-->
 	<h2>
 		<span id="flow-title"> Game Flow </span>
-		<span data-toggle="tooltip"
-			title=" The game flow is a graph of the difference of
-			attempts between the teams.
-
-			Attempts are a good way to gauge the flow of the game
-			using more than just the score. Attempts have
-			been proven to be a good predictor of how teams
-			will do over the course of a season.
-
-			Attempts are:
-					goals + shots + misses + blocked shots
-
-			When the graph goes right, EDM has the advantage.
-			When the graph goes left, STL has the advantage.
-
-						 ">(i)</span>
+		<button type="button" class="btn btn-info" data-toggle="modal" data-target="#infoFlow">Info</button>
 	</h2>
+
+	<!-- Modal for flow -->
+	<div id="infoFlow" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title centered">Game Flow</h4>
+	      </div>
+	      <div class="modal-body">
+					<p>The game flow is a graph of the difference of attempts between the teams.</p>
+					<p>Attempts are a good way to gauge the flow of the game susing more
+					than just the score. Attempts have been proven to be a good predictor
+					of how teams will do over the course of a season.</p>
+
+					<p>Attempts are:</p>
+					<p>	goals + shots + misses + blocked shots</p>
+					<p>When the graph goes right, CGY has the advantage.
+					When the graph goes left, EDM has the advantage.</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+
+	  </div>
+	</div>
 
 	<h3>Attempt Difference Over Time</h3>
 	<div id='game-graph'>
 	</div>
 
 	<!-- The zoom toggle buttons-->
-	<div class='row'>
+	<div class='row text-center'>
 
-			<div class = 'col-xs-2'>
-				Zoom To:
-			</div>
+			<div class = 'col-xs-12'>
 
-			<div class = 'col-xs-10'>
-
-				<button type="button" class="btn btn-default" id="1-period">1st</button>
-				<button type="button" class="btn btn-default" id="2-period">2nd</button>
-				<button type="button" class="btn btn-default" id="3-period">3rd</button>
-				<button type="button" class="btn btn-default" id="ot-period">OT</button>
-				<button type="button" class="btn btn-default" id="all-period">All</button>
+				<button type="button" class="btn btn-default btn-success" id="1-period">1st</button>
+				<button type="button" class="btn btn-default btn-success" id="2-period">2nd</button>
+				<button type="button" class="btn btn-default btn-success" id="3-period">3rd</button>
+				
+				<button type="button" class="btn btn-default btn-primary" id="all-period">All</button>
 
 			</div>
 	</div>
+
+	<!-- The game stats bar graphs-->
+	<h2>
+	<span id="stats-title"> Game Stats</span>
+		<button type="button" class="btn btn-info" data-toggle="modal" data-target="#infoStats">Info</button>
+	</h2>
+
+	<!-- Modal for flow -->
+	<div id="infoStats" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title centered">Game Stats</h4>
+	      </div>
+	      <div class="modal-body">
+					<p>Game Stats are summaries of different stats for both teams.
+						For each stat the ratio of the stat vs the total stats is calculated.
+						For example:</p>
+					<p>for goal ratio = (for goals)/(for goals) + (against goals)</p>
+					<p>The ratios are shown as bar graphs for both teams. The bars to
+						the left are for CGY and the bar to the right
+						are for EDM.</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+
+	  </div>
+	</div>
+
+	<div class='row'>
+		<div class='col-xs-6 centered'>
+		CGY
+		</div>
+		<div class='col-xs-6 centered'>
+		EDM
+		</div>
+	</div>
+	<div id='game-stats' class="bar-chart">
+	</div>
+
+
+
 </div>
     </div>
 

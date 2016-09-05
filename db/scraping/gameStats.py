@@ -50,11 +50,6 @@ def main():
                 games.update({"_id": game["_id"], field: id},
                              {"$set": {fieldSelector: stats}})
 
-            forPl = countStatAtTimeClose(gameId, "for", time)
-            forResults = db.aggregate(forPl)
-
-            print len(list(forResults))
-
             statAgainstPl = statPl(game["_id"], "against", statType)
             statAgainst = games.aggregate(statAgainstPl)
 
@@ -263,23 +258,6 @@ def countStatAtTime(id, forAgainst, stat, time=3900):
 
     return statsPL
 
-def countStatAtTimeClose(id, forAgainst, time=3900):
-
-    fieldName = forAgainst + "." + "attempts"
-    selector = "$" + fieldName
-
-    statsPL = [{"$match": {"_id": id}},
-               {"$unwind": selector},
-               {"$project": {"_id": 0,
-                             fieldName: 1}},
-               {"$match": {fieldName + ".time": {"$ne": 0}}},
-               {"$match": {fieldName + ".time": {"$lte": time}}},
-               {"$match": {fieldName + ".strength": {"$eq": "EV"}}},
-               {"$match": {fieldName + ".stats.dif.goals": {"$lte": 1}}},
-               {"$match": {fieldName + ".stats.dif.goals": {"$gte": 1}}},
-               {"$group": {"_id": "null", "count": {"$sum": 1}}}]
-
-    return statsPL
 
 
 # Parse and store a document containing the counts of different stats

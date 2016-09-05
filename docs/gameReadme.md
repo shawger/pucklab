@@ -7,7 +7,7 @@ This app was developed (in part) for the Udacity Data Analyst Nano Degree, Proje
 
 ## Summary
 
-The game app on PuckLab (my website) is designed to show a visual summary of a hockey game. Generally, when you want to look at what happened in a hockey game you can look at box scores, which tell you things like the final score, total shots, and how many penalties there are. What it doesn't tell you is the 'flow' of the game (did a team play good and just fall apart in the 3rd) and my app shows that by plotting the difference between attempts (shots, goals, etc) of the teams playing.
+The game app on PuckLab (my website) is designed to show a visual summary of a hockey game. Generally, when you want to look at what happened in a hockey game you can look at box scores, which tell you things like the final score, total shots, and how many penalties there are. What it doesn't tell you is the 'flow' of the game (did a team play good and just fall apart in the 3rd or maybe they played good but the opposition just got some lucky goals.) and my app shows that by plotting the difference between attempts (shots, goals, etc) of the teams playing.
 
 ## Design
 
@@ -17,6 +17,10 @@ Clearly display the teams that are playing, the flow of the game and some key ga
 
 For each game there are 2 teams. A for team and an against team. In general, keep the for team on the left and the against team on the right. Color key aspects on the page by the color as well.
 
+The graphics are designed so that hockey fans should be able to understand the graphics without any additional information. Info boxes are available, so non-hockey fans should also be able to figure out what is going on.
+
+This is part of a larger project that will show this data for every NHL game. I am not covering how that works here, but for the page design it was important to make sure the graphics work for any regular season hockey game.
+
 ### Game Flow Chart
 
 The main graphic on the page.
@@ -25,7 +29,7 @@ Show a line graph that represents the flow of a hockey game.
 
 Plot (and connect) each attempt by the 'for' team and 'against' team. Each attempt will be plotted by the time of the attempt and by the attempt difference between the 'for' team and the 'against' team at the time of the attempt.
 
-- The x axis show the attempt difference between the 'for' team and the 'against' team at the time of the attempt. The range should be the absolute value of the max difference at any time. This way the dif of 0 is right in the middle.
+- The x axis shows the attempt difference between the 'for' team and the 'against' team at the time of the attempt. The range should be the absolute value of the max difference at any time. This way the dif of 0 is right in the middle.
 
 - The y axis is the game time in seconds.
 
@@ -35,7 +39,7 @@ Features:
 
  - When a attempt or goal is moused over, show a tool tip showing details of the attempt or goal.
 
- - Allow the user to zoom into different periods.
+ - Allow the user to zoom into different periods. As part of a user request, I made it so when a period is zoomed, the chart shifts so the initial difference in attempts is always 0 at the start of a period.
 
 ### Game Stat Summary Chart
 
@@ -45,7 +49,7 @@ The idea is to show the stats for each team side by side for a quick comparison.
 
 Features:
 
-- Color bars based on team color
+- Color bars based on team color.
 - Allow user to zoom to a period, and update the bars to only show data from that period.
 - For the stats, show the numbers along with the bars.
 - Have the bars for the 'for' and 'against' team be beside each other and go the opposite direction.
@@ -58,14 +62,58 @@ Stats To Include:
 
 ### Data and Webserver
 
-For testing and (maybe) assignment submission I manually edited the html file, moved around the scripts and style sheets, and put the json data directly into the game.js file so it can be used without a webserver.
+For testing and assignment submission I manually edited the html file, moved around the scripts and style sheets, and put the json data directly into the game.js file so it can be used without a webserver.
 
-For development and (maybe) final deployment I used a python Flask webserver and MongoDB for the data. For that whole project go (here)[https://github.com/shawger/pucklab]
+For the test app I also included a JSON file for reference (data.json) and the code book for the JSON (data.md),
+
+For development and final deployment I used a python Flask webserver and MongoDB for the data. For that whole project go (here)[https://github.com/shawger/pucklab]
+
+Also in the github project are my scripts for downloading the data from the NHL page, parsing the data and loading it into the mongodb.
+
+See the readme.md on the project page for more information on the scraping, backend tools, and frontend tools.
 
 ## Feedback
+
+4 people were sent a test version of the page and asked for some comments. Here is a summary of the comments:
+
+Karo (Scientist):
+
+- Not sure what 'game flow' was.
+- Some dots of the graph were empty, others were filled.
+- Links to NHL page.
+- (Not in response, but verbally said) Confusing about what the graphs are supposed to be.
+
+Dan (Hockey Fan):
+
+- Hard to see the tooltops on the graph.
+- When zooming into a period, have the graph re-center (start attempt dif at 0).
+- Highlight anomalies.
+- Show powerplays.
+
+Bev (Teacher):
+
+ - She didn't understand the graph at all. She is not a hockey fan.
+
+Fixed/Added based on comments:
+
+- Added labels to axis, more tooltips and info buttons to describe what is going on.
+- When zooming to a period the flow chart re-centers to start the period at 0 attempt difference.
+- Made sure all the dots were empty and fixed bug that caused dots to use the wrong symbol when zooming.
+- Made dots on flow graph slightly bigger when looking at the entire game, and even bigger when zooming in.
+
+Not Added:
+
+- Anomaly highlighting. Would be pretty cool, but my main goal is to show some graphs and adding this would be quite the project and outside the scope of the assignment.
+- Links to NHL players. Also useful but once again outside the scope of this assignment.
+- Show powerplays. This is probably the next feature I would (will) add as it gives an even better idea of what is happening in the game. The data wrangling required for this is pretty significant, so for now, I am leaving it out.
+
+Results:
+
+I showed the updated version of the webapp to the testers and overall they were satisfied that the data shown was more clearly described. They still would like more features but who doesn't...
 
 ## Resources
 
 - (Material colors less)[https://github.com/mrmlnc/material-color/blob/master/material-color.less]
 - (Tutorials from Mike Bostock)[https://bost.ocks.org/mike/]
 - (d3.tip.js for tooltips)[https://github.com/Caged/d3-tip]
+- (bootstrap for layout)[http://getbootstrap.com/]

@@ -785,7 +785,7 @@ function statsGraph(data) {
         .attr("class", "bar-labels")
         .attr("text-anchor", "middle")
         .attr("y", function(d) {
-            return y(d.type) + y.bandwidth() - 5;
+            return y(d.type) + y.bandwidth() - 3;
         })
         .attr("x", function(d) {
             return graphWidth / 2;

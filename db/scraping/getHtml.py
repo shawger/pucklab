@@ -74,7 +74,7 @@ def getSummaries(rootPath):
         i = 1
         while(i <= games):
 
-            fileName = rootPath + "/rawHTML/summaries/" + \
+            fileName = rootPath + "/rawHTML/summary/" + \
                 seasonStr + "_" + str(i) + ".HTM"
 
             # Only download if file does not exist

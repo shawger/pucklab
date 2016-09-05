@@ -1,0 +1,47 @@
+########################################
+INSTRUCTIONS
+########################################
+
+1. Open index.html in your favorite web browser.
+2. Play with the web page.
+3. Give me your feed back here!
+
+########################################
+BACKGROUND
+########################################
+
+I am collecting feedback for my webapp, pucklab.
+
+Pucklab is a webapp that graphically summarizes a
+hockey game based on play by play data.
+
+I do not yet have the webserver set up, so you
+are testing a static and standalone version of
+the app. Basically one game. That shows the Oilers
+loosing.
+
+########################################
+QUESTIONS
+########################################
+
+1. Did the app seem to work? You could see a bar graphs describing
+the game stats and a plot to describe the game flow. (Yes or No)? Y
+
+2. Did you encounter any bugs? If yes, please describe. N
+
+3. Did you encounter any problems with the data?
+EI, data seemed to be missing. N
+
+4. Can you understand what the graphs show? 
+
+Not sure about the game flow. Are the dots any different (empty/filled in/crosses)? What does it mean? Crosses= block/miss, dots everything else? So the empty dots just look different because the line does not go through them but turns around? And what was it again that you count, puck occupancy difference? I am missing a legend somewhere. Or axis labels, what is 0/5/10/15? Or maybe that’s something that’s very obvious if you know stuff about hockey?
+
+5. What features would you like to see added?
+
+Ok, so I don’t know if that’s possible because you need to hover over the goal to get the info..and I don’t know if there is like an NHL official page for every player…but it would be cool if you could click on the name of the goal scorer and would get there.
+
+6. What did you like about the app?
+
+Team colors!
+
+Thank you for your time.

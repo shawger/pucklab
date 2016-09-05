@@ -1,0 +1,41 @@
+########################################
+INSTRUCTIONS
+########################################
+
+1. Open index.html in your favorite web browser.
+2. Play with the web page.
+3. Give me your feed back here!
+
+########################################
+BACKGROUND
+########################################
+
+I am collecting feedback for my webapp, pucklab.
+
+Pucklab is a webapp that graphically summarizes a
+hockey game based on play by play data.
+
+I do not yet have the webserver set up, so you
+are testing a static and standalone version of
+the app. Basically one game. That shows the Oilers
+loosing.
+
+########################################
+QUESTIONS
+########################################
+
+1. Did the app seem to work? You could see a bar graphs describing
+the game stats and a plot to describe the game flow. (Yes or No)? Yes
+
+2. Did you encounter any bugs? No
+
+3. Did you encounter any problems with the data?
+No. But I am not sure what I am looking at.
+
+4. Can you understand what the graphs show? Not really. If I knew hockey than maybe.
+
+5. What features would you like to see added? A better description of what the graphs are supposed to be.
+
+6. What did you like about the app? Colors look nice. The zooming feature.  
+
+Thank you for your time.

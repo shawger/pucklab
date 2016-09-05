@@ -42,9 +42,14 @@ class Page:
 
     def render(self):
 
+        if(self.nav != None):
+            nav = self.nav.render()
+        else:
+            nav = ""
+
         template_values = {
             'page': self,
-            'nav': self.nav.render()
+            'nav': nav
         }
 
         template = JINJA_ENVIRONMENT.get_template('standard.html')

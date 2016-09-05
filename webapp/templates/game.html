@@ -60,12 +60,52 @@
 	</div>
 
 	<!-- The game stats bar graphs-->
-	<h2 id="stats-title"> Game Stats</h2>
-	<div id='for-goals-graph' class="bar-chart">
+	<h2>
+	<span id="stats-title"> Game Stats</span>
+	<span data-toggle="tooltip"
+		title=" Game Stats are summaries of different stats
+		for both teams. For each stat the ratio of the stat
+		vs the total stats is calculated. For example:
+
+			for goal ratio = (for goals)/(for goals) + (against goals)
+
+		The ratios are shown as bar graphs for both teams.
+		The bars to the left are for {{data.for.team.abv}} and the bar to
+		the right are for {{data.against.team.abv}}.">(i)</span>
+	</h2>
+	<div class='row'>
+		<div class='col-xs-6 centered'>
+		{{data.for.team.abv}}
+		</div>
+		<div class='col-xs-6 centered'>
+		{{data.against.team.abv}}
+		</div>
+	</div>
+	<div id='game-stats' class="bar-chart">
 	</div>
 
 	<!-- The game flow graph-->
-	<h2 id="flow-title"> Game Flow</h2>
+	<h2>
+		<span id="flow-title"> Game Flow </span>
+		<span data-toggle="tooltip"
+			title=" The game flow is a graph of the difference of
+			attempts between the teams.
+
+			Attempts are a good way to gauge the flow of the game
+			using more than just the score. Attempts have
+			been proven to be a good predictor of how teams
+			will do over the course of a season.
+
+			Attempts are:
+					goals + shots + misses + blocked shots
+
+			When the graph goes right, {{data.for.team.abv}} has the advantage.
+			When the graph goes left, {{data.against.team.abv}} has the advantage.
+
+						 ">(i)</span>
+	</h2>
+
+	<h3>Attempt Difference Over Time</h3>
 	<div id='game-graph'>
 	</div>
 

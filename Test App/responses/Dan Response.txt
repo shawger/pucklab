@@ -1,0 +1,41 @@
+########################################
+INSTRUCTIONS
+########################################
+
+1. Open index.html in your favorite web browser.
+2. Play with the web page.
+3. Give me your feed back here!
+
+########################################
+BACKGROUND
+########################################
+
+I am collecting feedback for my webapp, pucklab.
+
+Pucklab is a webapp that graphically summarizes a
+hockey game based on play by play data.
+
+I do not yet have the webserver set up, so you
+are testing a static and standalone version of
+the app. Basically one game. That shows the Oilers
+loosing.
+
+########################################
+QUESTIONS
+########################################
+
+1. Did the app seem to work? You could see a bar graphs describing
+the game stats and a plot to describe the game flow. (Yes or No)? Yes
+
+2. Did you encounter any bugs? If yes, please describe.I had to be very bang on the points to get the data of who was involved in the play.
+
+3. Did you encounter any problems with the data?
+EI, data seemed to be missing. Well, for example -  when I clicked on the third period flow it started with the shot attempts all ready happened. I wanted to see the flow in just the third period. Switching between data sets, just appeared to give a close up of the same data. I was expecting individual data sets from each period. 
+
+4. Can you understand what the graphs show? I think so, it demonstrated pretty well the eb and flow of who was in control throughout the game based on shot attempts. 
+
+5. What features would you like to see added? I would like to see each period break down starting from a zero point. As well, if there was a PP or something. Have that highlighter in the graph to show possible anomalies as to why there was 7 shot attempts wide by Dion Phaneuf.  
+
+6. What did you like about the app? The fact you picked the oilers losing. I like the cleanliness to it, I think it was easy enough to understand. I would be interested to see what a game like a Flames comeback win from 14-15 season looks like. I would like to see if the data shows a point where they actually take back control. I am not sure what to take out of it though. There are time where both teams dominate the game flow, but in the end the line chart, just tells me that Stl just had 7 more shot attempts.  
+
+Thank you for your time.

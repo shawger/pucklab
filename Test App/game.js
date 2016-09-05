@@ -208,6 +208,7 @@ function drawGameGraph(data) {
     var statLine = svg.append("path")
         .attr("class", "line")
         .attr("d", valueline(events));
+
     // Graph the points along the statline
     // Each point is a attempt. Different attempt
     // type have different symbols
@@ -226,7 +227,7 @@ function drawGameGraph(data) {
                     return d3.symbolCross;
                 }
             })
-            .size(10))
+            .size(20))
         .attr("transform", function(d) {
             return "translate(" + x(d.dif) + "," + y(d.time) + ")";
         })
@@ -432,6 +433,16 @@ function zoomGameGraph(data, start, end, x, y, width, height, valueline) {
     var points = svg.selectAll(".point")
         .data(events)
     points.transition()
+      .attr("d", d3.symbol()
+          .type(function(d) {
+              if (d.type == "goal") {
+                  return d3.symbolDiamond;
+              } else if (d.type == "shot") {
+                  return d3.symbolCircle;
+              } else {
+                  return d3.symbolCross;
+              }
+          })
         .attr("transform", function(d) {
             return "translate(" + x(d.dif) + "," + y(d.time) + ")";
         })
@@ -866,4033 +877,4033 @@ function calcRatio(varA, varB) {
 
 function loadData(){
 	data = {
-    "_id": "20158a", 
+    "_id": "20158a",
     "against": {
         "attempts": [
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 1, 
-                        "goals": 0, 
+                        "attempts": 1,
+                        "goals": 0,
                         "shots": 1
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -1, 
+                        "attempts": -1,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 24, 
+                },
+                "time": 24,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 2, 
-                        "goals": 0, 
+                        "attempts": 2,
+                        "goals": 0,
                         "shots": 2
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -2, 
+                        "attempts": -2,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 30, 
+                },
+                "time": 30,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "COLTON PARAYKO", 
-                    "number": "55", 
+                    "name": "COLTON PARAYKO",
+                    "number": "55",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 3, 
-                        "goals": 0, 
+                        "attempts": 3,
+                        "goals": 0,
                         "shots": 2
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -3, 
+                        "attempts": -3,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 35, 
+                },
+                "time": 35,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JADEN SCHWARTZ", 
-                    "number": "17", 
+                    "name": "JADEN SCHWARTZ",
+                    "number": "17",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 4, 
-                        "goals": 0, 
+                        "attempts": 4,
+                        "goals": 0,
                         "shots": 2
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 82, 
+                },
+                "time": 82,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KEVIN SHATTENKIRK", 
-                    "number": "22", 
+                    "name": "KEVIN SHATTENKIRK",
+                    "number": "22",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 5, 
-                        "goals": 0, 
+                        "attempts": 5,
+                        "goals": 0,
                         "shots": 3
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 212, 
+                },
+                "time": 212,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 6, 
-                        "goals": 0, 
+                        "attempts": 6,
+                        "goals": 0,
                         "shots": 3
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 372, 
+                },
+                "time": 372,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JORI LEHTERA", 
-                    "number": "12", 
+                    "name": "JORI LEHTERA",
+                    "number": "12",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 7, 
-                        "goals": 0, 
+                        "attempts": 7,
+                        "goals": 0,
                         "shots": 4
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 379, 
+                },
+                "time": 379,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "ROBBY FABBRI", 
-                    "number": "15", 
+                    "name": "ROBBY FABBRI",
+                    "number": "15",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 8, 
-                        "goals": 0, 
+                        "attempts": 8,
+                        "goals": 0,
                         "shots": 4
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 406, 
+                },
+                "time": 406,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 9, 
-                        "goals": 0, 
+                        "attempts": 9,
+                        "goals": 0,
                         "shots": 4
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 0, 
-                        "goals": 0, 
+                        "attempts": 0,
+                        "goals": 0,
                         "shots": 0
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.0, 
-                        "goals": 0, 
+                        "attempts": 0.0,
+                        "goals": 0,
                         "shots": 0.0
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 410, 
+                },
+                "time": 410,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "c", 
-                    "name": "DAVID BACKES", 
-                    "number": "42", 
+                    "cap": "c",
+                    "name": "DAVID BACKES",
+                    "number": "42",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 2, 
-                        "goals": 0, 
+                        "attempts": 2,
+                        "goals": 0,
                         "shots": 1
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.16666666666666666, 
-                        "goals": 0, 
+                        "attempts": 0.16666666666666666,
+                        "goals": 0,
                         "shots": 0.16666666666666666
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 545, 
+                },
+                "time": 545,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "ROBBY FABBRI", 
-                    "number": "15", 
+                    "name": "ROBBY FABBRI",
+                    "number": "15",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 4, 
-                        "goals": 0, 
+                        "attempts": 4,
+                        "goals": 0,
                         "shots": 3
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.26666666666666666, 
-                        "goals": 0, 
+                        "attempts": 0.26666666666666666,
+                        "goals": 0,
                         "shots": 0.375
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 635, 
+                },
+                "time": 635,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "ALEX PIETRANGELO", 
-                    "number": "27", 
+                    "cap": "A",
+                    "name": "ALEX PIETRANGELO",
+                    "number": "27",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 12, 
-                        "goals": 0, 
+                        "attempts": 12,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -2, 
+                        "attempts": -2,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 7
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45454545454545453, 
-                        "goals": 0, 
+                        "attempts": 0.45454545454545453,
+                        "goals": 0,
                         "shots": 0.5833333333333334
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 830, 
+                },
+                "time": 830,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 13, 
-                        "goals": 0, 
+                        "attempts": 13,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -3, 
+                        "attempts": -3,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 7
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.43478260869565216, 
-                        "goals": 0, 
+                        "attempts": 0.43478260869565216,
+                        "goals": 0,
                         "shots": 0.5833333333333334
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 874, 
+                },
+                "time": 874,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 14, 
-                        "goals": 0, 
+                        "attempts": 14,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 7
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4166666666666667, 
-                        "goals": 0, 
+                        "attempts": 0.4166666666666667,
+                        "goals": 0,
                         "shots": 0.5833333333333334
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 885, 
+                },
+                "time": 885,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 15, 
-                        "goals": 0, 
+                        "attempts": 15,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 7
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4, 
-                        "goals": 0, 
+                        "attempts": 0.4,
+                        "goals": 0,
                         "shots": 0.5833333333333334
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 917, 
+                },
+                "time": 917,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "TROY BROUWER", 
-                    "number": "36", 
+                    "name": "TROY BROUWER",
+                    "number": "36",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 16, 
-                        "goals": 0, 
+                        "attempts": 16,
+                        "goals": 0,
                         "shots": 6
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 8
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4074074074074074, 
-                        "goals": 0, 
+                        "attempts": 0.4074074074074074,
+                        "goals": 0,
                         "shots": 0.5714285714285714
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 976, 
+                },
+                "time": 976,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JADEN SCHWARTZ", 
-                    "number": "17", 
+                    "name": "JADEN SCHWARTZ",
+                    "number": "17",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 17, 
-                        "goals": 0, 
+                        "attempts": 17,
+                        "goals": 0,
                         "shots": 6
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 13, 
-                        "goals": 1, 
+                        "attempts": 13,
+                        "goals": 1,
                         "shots": 9
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.43333333333333335, 
-                        "goals": 1.0, 
+                        "attempts": 0.43333333333333335,
+                        "goals": 1.0,
                         "shots": 0.6
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1119, 
+                },
+                "time": 1119,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KEVIN SHATTENKIRK", 
-                    "number": "22", 
+                    "name": "KEVIN SHATTENKIRK",
+                    "number": "22",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 18, 
-                        "goals": 0, 
+                        "attempts": 18,
+                        "goals": 0,
                         "shots": 7
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 13, 
-                        "goals": 1, 
+                        "attempts": 13,
+                        "goals": 1,
                         "shots": 9
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.41935483870967744, 
-                        "goals": 1.0, 
+                        "attempts": 0.41935483870967744,
+                        "goals": 1.0,
                         "shots": 0.5625
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1129, 
+                },
+                "time": 1129,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "c", 
-                    "name": "DAVID BACKES", 
-                    "number": "42", 
+                    "cap": "c",
+                    "name": "DAVID BACKES",
+                    "number": "42",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 19, 
-                        "goals": 0, 
+                        "attempts": 19,
+                        "goals": 0,
                         "shots": 8
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 14, 
-                        "goals": 1, 
+                        "attempts": 14,
+                        "goals": 1,
                         "shots": 10
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42424242424242425, 
-                        "goals": 1.0, 
+                        "attempts": 0.42424242424242425,
+                        "goals": 1.0,
                         "shots": 0.5555555555555556
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1161, 
+                },
+                "time": 1161,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 20, 
-                        "goals": 0, 
+                        "attempts": 20,
+                        "goals": 0,
                         "shots": 8
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 14, 
-                        "goals": 1, 
+                        "attempts": 14,
+                        "goals": 1,
                         "shots": 10
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4117647058823529, 
-                        "goals": 1.0, 
+                        "attempts": 0.4117647058823529,
+                        "goals": 1.0,
                         "shots": 0.5555555555555556
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1189, 
+                },
+                "time": 1189,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "ALEXANDER STEEN", 
-                    "number": "20", 
+                    "cap": "A",
+                    "name": "ALEXANDER STEEN",
+                    "number": "20",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 21, 
-                        "goals": 0, 
+                        "attempts": 21,
+                        "goals": 0,
                         "shots": 9
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 14, 
-                        "goals": 1, 
+                        "attempts": 14,
+                        "goals": 1,
                         "shots": 10
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4, 
-                        "goals": 1.0, 
+                        "attempts": 0.4,
+                        "goals": 1.0,
                         "shots": 0.5263157894736842
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1236, 
+                },
+                "time": 1236,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "ALEXANDER STEEN", 
-                    "number": "20", 
+                    "cap": "A",
+                    "name": "ALEXANDER STEEN",
+                    "number": "20",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 22, 
-                        "goals": 0, 
+                        "attempts": 22,
+                        "goals": 0,
                         "shots": 9
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 15, 
-                        "goals": 1, 
+                        "attempts": 15,
+                        "goals": 1,
                         "shots": 11
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.40540540540540543, 
-                        "goals": 1.0, 
+                        "attempts": 0.40540540540540543,
+                        "goals": 1.0,
                         "shots": 0.55
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1274, 
+                },
+                "time": 1274,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JADEN SCHWARTZ", 
-                    "number": "17", 
+                    "name": "JADEN SCHWARTZ",
+                    "number": "17",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 23, 
-                        "goals": 0, 
+                        "attempts": 23,
+                        "goals": 0,
                         "shots": 9
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 16, 
-                        "goals": 1, 
+                        "attempts": 16,
+                        "goals": 1,
                         "shots": 12
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.41025641025641024, 
-                        "goals": 1.0, 
+                        "attempts": 0.41025641025641024,
+                        "goals": 1.0,
                         "shots": 0.5714285714285714
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1312, 
+                },
+                "time": 1312,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "STEVE OTT", 
-                    "number": "9", 
+                    "name": "STEVE OTT",
+                    "number": "9",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 24, 
-                        "goals": 0, 
+                        "attempts": 24,
+                        "goals": 0,
                         "shots": 10
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 18, 
-                        "goals": 1, 
+                        "attempts": 18,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42857142857142855, 
-                        "goals": 1.0, 
+                        "attempts": 0.42857142857142855,
+                        "goals": 1.0,
                         "shots": 0.5833333333333334
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1397, 
+                },
+                "time": 1397,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KEVIN SHATTENKIRK", 
-                    "number": "22", 
+                    "name": "KEVIN SHATTENKIRK",
+                    "number": "22",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 25, 
-                        "goals": 0, 
+                        "attempts": 25,
+                        "goals": 0,
                         "shots": 11
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 18, 
-                        "goals": 1, 
+                        "attempts": 18,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4186046511627907, 
-                        "goals": 1.0, 
+                        "attempts": 0.4186046511627907,
+                        "goals": 1.0,
                         "shots": 0.56
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1525, 
+                },
+                "time": 1525,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "c", 
-                    "name": "DAVID BACKES", 
-                    "number": "42", 
+                    "cap": "c",
+                    "name": "DAVID BACKES",
+                    "number": "42",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 26, 
-                        "goals": 0, 
+                        "attempts": 26,
+                        "goals": 0,
                         "shots": 12
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 19, 
-                        "goals": 1, 
+                        "attempts": 19,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4222222222222222, 
-                        "goals": 1.0, 
+                        "attempts": 0.4222222222222222,
+                        "goals": 1.0,
                         "shots": 0.5384615384615384
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1613, 
+                },
+                "time": 1613,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 27, 
-                        "goals": 1, 
+                        "attempts": 27,
+                        "goals": 1,
                         "shots": 13
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 19, 
-                        "goals": 1, 
+                        "attempts": 19,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.41304347826086957, 
-                        "goals": 0.5, 
+                        "attempts": 0.41304347826086957,
+                        "goals": 0.5,
                         "shots": 0.5185185185185185
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1750, 
+                },
+                "time": 1750,
                 "type": "goal"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "CARL GUNNARSSON", 
-                    "number": "4", 
+                    "name": "CARL GUNNARSSON",
+                    "number": "4",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 13
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 19, 
-                        "goals": 1, 
+                        "attempts": 19,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.40425531914893614, 
-                        "goals": 0.5, 
+                        "attempts": 0.40425531914893614,
+                        "goals": 0.5,
                         "shots": 0.5185185185185185
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1773, 
+                },
+                "time": 1773,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "c", 
-                    "name": "DAVID BACKES", 
-                    "number": "42", 
+                    "cap": "c",
+                    "name": "DAVID BACKES",
+                    "number": "42",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 29, 
-                        "goals": 1, 
+                        "attempts": 29,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 21, 
-                        "goals": 1, 
+                        "attempts": 21,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42, 
-                        "goals": 0.5, 
+                        "attempts": 0.42,
+                        "goals": 0.5,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1840, 
+                },
+                "time": 1840,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "DMITRIJ JASKIN", 
-                    "number": "23", 
+                    "name": "DMITRIJ JASKIN",
+                    "number": "23",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 30, 
-                        "goals": 1, 
+                        "attempts": 30,
+                        "goals": 1,
                         "shots": 15
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 25, 
-                        "goals": 1, 
+                        "attempts": 25,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45454545454545453, 
-                        "goals": 0.5, 
+                        "attempts": 0.45454545454545453,
+                        "goals": 0.5,
                         "shots": 0.5161290322580645
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1952, 
+                },
+                "time": 1952,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "TROY BROUWER", 
-                    "number": "36", 
+                    "name": "TROY BROUWER",
+                    "number": "36",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 31, 
-                        "goals": 1, 
+                        "attempts": 31,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 25, 
-                        "goals": 1, 
+                        "attempts": 25,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.44642857142857145, 
-                        "goals": 0.5, 
+                        "attempts": 0.44642857142857145,
+                        "goals": 0.5,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1971, 
+                },
+                "time": 1971,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "TROY BROUWER", 
-                    "number": "36", 
+                    "name": "TROY BROUWER",
+                    "number": "36",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 32, 
-                        "goals": 1, 
+                        "attempts": 32,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4666666666666667, 
-                        "goals": 0.5, 
+                        "attempts": 0.4666666666666667,
+                        "goals": 0.5,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2109, 
+                },
+                "time": 2109,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 33, 
-                        "goals": 1, 
+                        "attempts": 33,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45901639344262296, 
-                        "goals": 0.5, 
+                        "attempts": 0.45901639344262296,
+                        "goals": 0.5,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2126, 
+                },
+                "time": 2126,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 34, 
-                        "goals": 1, 
+                        "attempts": 34,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45161290322580644, 
-                        "goals": 0.5, 
+                        "attempts": 0.45161290322580644,
+                        "goals": 0.5,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2132, 
+                },
+                "time": 2132,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "ALEXANDER STEEN", 
-                    "number": "20", 
+                    "cap": "A",
+                    "name": "ALEXANDER STEEN",
+                    "number": "20",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 35, 
-                        "goals": 1, 
+                        "attempts": 35,
+                        "goals": 1,
                         "shots": 18
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4444444444444444, 
-                        "goals": 0.5, 
+                        "attempts": 0.4444444444444444,
+                        "goals": 0.5,
                         "shots": 0.4857142857142857
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2186, 
+                },
+                "time": 2186,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "COLTON PARAYKO", 
-                    "number": "55", 
+                    "name": "COLTON PARAYKO",
+                    "number": "55",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 36, 
-                        "goals": 1, 
+                        "attempts": 36,
+                        "goals": 1,
                         "shots": 19
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4375, 
-                        "goals": 0.5, 
+                        "attempts": 0.4375,
+                        "goals": 0.5,
                         "shots": 0.4722222222222222
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2245, 
+                },
+                "time": 2245,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KYLE BRODZIAK", 
-                    "number": "28", 
+                    "name": "KYLE BRODZIAK",
+                    "number": "28",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 37, 
-                        "goals": 1, 
+                        "attempts": 37,
+                        "goals": 1,
                         "shots": 19
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4307692307692308, 
-                        "goals": 0.5, 
+                        "attempts": 0.4307692307692308,
+                        "goals": 0.5,
                         "shots": 0.4722222222222222
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2262, 
+                },
+                "time": 2262,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JADEN SCHWARTZ", 
-                    "number": "17", 
+                    "name": "JADEN SCHWARTZ",
+                    "number": "17",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 38, 
-                        "goals": 1, 
+                        "attempts": 38,
+                        "goals": 1,
                         "shots": 20
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -10, 
+                        "attempts": -10,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42424242424242425, 
-                        "goals": 0.5, 
+                        "attempts": 0.42424242424242425,
+                        "goals": 0.5,
                         "shots": 0.4594594594594595
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2288, 
+                },
+                "time": 2288,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KEVIN SHATTENKIRK", 
-                    "number": "22", 
+                    "name": "KEVIN SHATTENKIRK",
+                    "number": "22",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 39, 
-                        "goals": 1, 
+                        "attempts": 39,
+                        "goals": 1,
                         "shots": 20
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -11, 
+                        "attempts": -11,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.417910447761194, 
-                        "goals": 0.5, 
+                        "attempts": 0.417910447761194,
+                        "goals": 0.5,
                         "shots": 0.4594594594594595
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2340, 
+                },
+                "time": 2340,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KEVIN SHATTENKIRK", 
-                    "number": "22", 
+                    "name": "KEVIN SHATTENKIRK",
+                    "number": "22",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 40, 
-                        "goals": 1, 
+                        "attempts": 40,
+                        "goals": 1,
                         "shots": 21
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -12, 
+                        "attempts": -12,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4117647058823529, 
-                        "goals": 0.5, 
+                        "attempts": 0.4117647058823529,
+                        "goals": 0.5,
                         "shots": 0.4473684210526316
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2356, 
+                },
+                "time": 2356,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JAY BOUWMEESTER", 
-                    "number": "19", 
+                    "name": "JAY BOUWMEESTER",
+                    "number": "19",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 41, 
-                        "goals": 1, 
+                        "attempts": 41,
+                        "goals": 1,
                         "shots": 21
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -13, 
+                        "attempts": -13,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4057971014492754, 
-                        "goals": 0.5, 
+                        "attempts": 0.4057971014492754,
+                        "goals": 0.5,
                         "shots": 0.4473684210526316
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2361, 
+                },
+                "time": 2361,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JAY BOUWMEESTER", 
-                    "number": "19", 
+                    "name": "JAY BOUWMEESTER",
+                    "number": "19",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 42, 
-                        "goals": 1, 
+                        "attempts": 42,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -14, 
+                        "attempts": -14,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4, 
-                        "goals": 0.5, 
+                        "attempts": 0.4,
+                        "goals": 0.5,
                         "shots": 0.4358974358974359
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2399, 
+                },
+                "time": 2399,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JOEL EDMUNDSON", 
-                    "number": "6", 
+                    "name": "JOEL EDMUNDSON",
+                    "number": "6",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 43, 
-                        "goals": 1, 
+                        "attempts": 43,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -11, 
+                        "attempts": -11,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 32, 
-                        "goals": 1, 
+                        "attempts": 32,
+                        "goals": 1,
                         "shots": 19
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4266666666666667, 
-                        "goals": 0.5, 
+                        "attempts": 0.4266666666666667,
+                        "goals": 0.5,
                         "shots": 0.4634146341463415
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2553, 
+                },
+                "time": 2553,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KYLE BRODZIAK", 
-                    "number": "28", 
+                    "name": "KYLE BRODZIAK",
+                    "number": "28",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 44, 
-                        "goals": 1, 
+                        "attempts": 44,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 35, 
-                        "goals": 1, 
+                        "attempts": 35,
+                        "goals": 1,
                         "shots": 21
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4430379746835443, 
-                        "goals": 0.5, 
+                        "attempts": 0.4430379746835443,
+                        "goals": 0.5,
                         "shots": 0.4883720930232558
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2662, 
+                },
+                "time": 2662,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "ALEXANDER STEEN", 
-                    "number": "20", 
+                    "cap": "A",
+                    "name": "ALEXANDER STEEN",
+                    "number": "20",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 45, 
-                        "goals": 1, 
+                        "attempts": 45,
+                        "goals": 1,
                         "shots": 23
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 36, 
-                        "goals": 1, 
+                        "attempts": 36,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4444444444444444, 
-                        "goals": 0.5, 
+                        "attempts": 0.4444444444444444,
+                        "goals": 0.5,
                         "shots": 0.4888888888888889
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2737, 
+                },
+                "time": 2737,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 46, 
-                        "goals": 1, 
+                        "attempts": 46,
+                        "goals": 1,
                         "shots": 23
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 37, 
-                        "goals": 1, 
+                        "attempts": 37,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4457831325301205, 
-                        "goals": 0.5, 
+                        "attempts": 0.4457831325301205,
+                        "goals": 0.5,
                         "shots": 0.4888888888888889
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2824, 
+                },
+                "time": 2824,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "COLTON PARAYKO", 
-                    "number": "55", 
+                    "name": "COLTON PARAYKO",
+                    "number": "55",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 47, 
-                        "goals": 1, 
+                        "attempts": 47,
+                        "goals": 1,
                         "shots": 23
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 38, 
-                        "goals": 1, 
+                        "attempts": 38,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4470588235294118, 
-                        "goals": 0.5, 
+                        "attempts": 0.4470588235294118,
+                        "goals": 0.5,
                         "shots": 0.4888888888888889
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2883, 
+                },
+                "time": 2883,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "COLTON PARAYKO", 
-                    "number": "55", 
+                    "name": "COLTON PARAYKO",
+                    "number": "55",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 48, 
-                        "goals": 1, 
+                        "attempts": 48,
+                        "goals": 1,
                         "shots": 24
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -10, 
+                        "attempts": -10,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 38, 
-                        "goals": 1, 
+                        "attempts": 38,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4418604651162791, 
-                        "goals": 0.5, 
+                        "attempts": 0.4418604651162791,
+                        "goals": 0.5,
                         "shots": 0.4782608695652174
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2904, 
+                },
+                "time": 2904,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "KEVIN SHATTENKIRK", 
-                    "number": "22", 
+                    "name": "KEVIN SHATTENKIRK",
+                    "number": "22",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 49, 
-                        "goals": 1, 
+                        "attempts": 49,
+                        "goals": 1,
                         "shots": 24
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 41, 
-                        "goals": 1, 
+                        "attempts": 41,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45555555555555555, 
-                        "goals": 0.5, 
+                        "attempts": 0.45555555555555555,
+                        "goals": 0.5,
                         "shots": 0.4782608695652174
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2953, 
+                },
+                "time": 2953,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "RYAN REAVES", 
-                    "number": "75", 
+                    "name": "RYAN REAVES",
+                    "number": "75",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 50, 
-                        "goals": 1, 
+                        "attempts": 50,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 41, 
-                        "goals": 1, 
+                        "attempts": 41,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45054945054945056, 
-                        "goals": 0.5, 
+                        "attempts": 0.45054945054945056,
+                        "goals": 0.5,
                         "shots": 0.46808510638297873
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2959, 
+                },
+                "time": 2959,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "ROBBY FABBRI", 
-                    "number": "15", 
+                    "name": "ROBBY FABBRI",
+                    "number": "15",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 51, 
-                        "goals": 2, 
+                        "attempts": 51,
+                        "goals": 2,
                         "shots": 26
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -10, 
+                        "attempts": -10,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 41, 
-                        "goals": 1, 
+                        "attempts": 41,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.44565217391304346, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.44565217391304346,
+                        "goals": 0.3333333333333333,
                         "shots": 0.4583333333333333
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2969, 
+                },
+                "time": 2969,
                 "type": "goal"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "COLTON PARAYKO", 
-                    "number": "55", 
+                    "name": "COLTON PARAYKO",
+                    "number": "55",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 52, 
-                        "goals": 2, 
+                        "attempts": 52,
+                        "goals": 2,
                         "shots": 26
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -11, 
+                        "attempts": -11,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 41, 
-                        "goals": 1, 
+                        "attempts": 41,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.44086021505376344, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.44086021505376344,
+                        "goals": 0.3333333333333333,
                         "shots": 0.4583333333333333
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 3104, 
+                },
+                "time": 3104,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "JADEN SCHWARTZ", 
-                    "number": "17", 
+                    "name": "JADEN SCHWARTZ",
+                    "number": "17",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 53, 
-                        "goals": 2, 
+                        "attempts": 53,
+                        "goals": 2,
                         "shots": 27
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -12, 
+                        "attempts": -12,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 41, 
-                        "goals": 1, 
+                        "attempts": 41,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.43617021276595747, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.43617021276595747,
+                        "goals": 0.3333333333333333,
                         "shots": 0.4489795918367347
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 3123, 
+                },
+                "time": 3123,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "TROY BROUWER", 
-                    "number": "36", 
+                    "name": "TROY BROUWER",
+                    "number": "36",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 54, 
-                        "goals": 2, 
+                        "attempts": 54,
+                        "goals": 2,
                         "shots": 28
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 45, 
-                        "goals": 1, 
+                        "attempts": 45,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45454545454545453, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.45454545454545453,
+                        "goals": 0.3333333333333333,
                         "shots": 0.4716981132075472
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 3356, 
+                },
+                "time": 3356,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "COLTON PARAYKO", 
-                    "number": "55", 
+                    "name": "COLTON PARAYKO",
+                    "number": "55",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 55, 
-                        "goals": 2, 
+                        "attempts": 55,
+                        "goals": 2,
                         "shots": 29
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 46, 
-                        "goals": 1, 
+                        "attempts": 46,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45544554455445546, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.45544554455445546,
+                        "goals": 0.3333333333333333,
                         "shots": 0.46296296296296297
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 3399, 
+                },
+                "time": 3399,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "ALEXANDER STEEN", 
-                    "number": "20", 
+                    "cap": "A",
+                    "name": "ALEXANDER STEEN",
+                    "number": "20",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 56, 
-                        "goals": 2, 
+                        "attempts": 56,
+                        "goals": 2,
                         "shots": 30
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 48, 
-                        "goals": 1, 
+                        "attempts": 48,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.46153846153846156, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.46153846153846156,
+                        "goals": 0.3333333333333333,
                         "shots": 0.45454545454545453
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 3511, 
+                },
+                "time": 3511,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "TROY BROUWER", 
-                    "number": "36", 
+                    "name": "TROY BROUWER",
+                    "number": "36",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 57, 
-                        "goals": 3, 
+                        "attempts": 57,
+                        "goals": 3,
                         "shots": 31
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": -2
-                    }, 
+                    },
                     "for": {
-                        "attempts": 49, 
-                        "goals": 1, 
+                        "attempts": 49,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.46226415094339623, 
-                        "goals": 0.25, 
+                        "attempts": 0.46226415094339623,
+                        "goals": 0.25,
                         "shots": 0.44642857142857145
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 3582, 
+                },
+                "time": 3582,
                 "type": "goal"
             }
-        ], 
+        ],
         "goals": [
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "VLADIMIR TARASENKO", 
-                    "number": "91", 
+                    "name": "VLADIMIR TARASENKO",
+                    "number": "91",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 27, 
+                        "attempts": 27,
                         "goals": 1
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 19, 
+                        "attempts": 19,
                         "goals": 1
-                    }, 
+                    },
                     "ratio": {
                         "attempts": 0.41304347826086957
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 1750, 
+                },
+                "time": 1750,
                 "type": "goal"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "ROBBY FABBRI", 
-                    "number": "15", 
+                    "name": "ROBBY FABBRI",
+                    "number": "15",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 51, 
+                        "attempts": 51,
                         "goals": 2
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -10, 
+                        "attempts": -10,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 41, 
+                        "attempts": 41,
                         "goals": 1
-                    }, 
+                    },
                     "ratio": {
                         "attempts": 0.44565217391304346
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 2969, 
+                },
+                "time": 2969,
                 "type": "goal"
-            }, 
+            },
             {
                 "against": {
                     "abv": "EDM"
-                }, 
+                },
                 "shooter": {
-                    "name": "TROY BROUWER", 
-                    "number": "36", 
+                    "name": "TROY BROUWER",
+                    "number": "36",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 57, 
+                        "attempts": 57,
                         "goals": 3
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": -2
-                    }, 
+                    },
                     "for": {
-                        "attempts": 49, 
+                        "attempts": 49,
                         "goals": 1
-                    }, 
+                    },
                     "ratio": {
                         "attempts": 0.46226415094339623
                     }
-                }, 
+                },
                 "team": {
                     "abv": "STL"
-                }, 
-                "time": 3582, 
+                },
+                "time": 3582,
                 "type": "goal"
             }
-        ], 
+        ],
         "stats": {
             "goals": {
-                "1": 0, 
-                "2": 1, 
-                "3": 2, 
-                "4": 0, 
-                "5": 0, 
-                "reg": 3, 
+                "1": 0,
+                "2": 1,
+                "3": 2,
+                "4": 0,
+                "5": 0,
+                "reg": 3,
                 "total": 3
             }
-        }, 
+        },
         "team": {
             "abv": "STL"
         }
-    }, 
-    "date": "2015-10-08", 
+    },
+    "date": "2015-10-08",
     "for": {
         "attempts": [
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ERIC GRYBA", 
-                    "number": "62", 
+                    "name": "ERIC GRYBA",
+                    "number": "62",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 9, 
-                        "goals": 0, 
+                        "attempts": 9,
+                        "goals": 0,
                         "shots": 4
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 1, 
-                        "goals": 0, 
+                        "attempts": 1,
+                        "goals": 0,
                         "shots": 1
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.1, 
-                        "goals": 0, 
+                        "attempts": 0.1,
+                        "goals": 0,
                         "shots": 0.2
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 447, 
+                },
+                "time": 447,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "OSCAR KLEFBOM", 
-                    "number": "77", 
+                    "name": "OSCAR KLEFBOM",
+                    "number": "77",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 9, 
-                        "goals": 0, 
+                        "attempts": 9,
+                        "goals": 0,
                         "shots": 4
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 2, 
-                        "goals": 0, 
+                        "attempts": 2,
+                        "goals": 0,
                         "shots": 1
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.18181818181818182, 
-                        "goals": 0, 
+                        "attempts": 0.18181818181818182,
+                        "goals": 0,
                         "shots": 0.2
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 530, 
+                },
+                "time": 530,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "JUSTIN SCHULTZ", 
-                    "number": "19", 
+                    "name": "JUSTIN SCHULTZ",
+                    "number": "19",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 3, 
-                        "goals": 0, 
+                        "attempts": 3,
+                        "goals": 0,
                         "shots": 2
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.23076923076923078, 
-                        "goals": 0, 
+                        "attempts": 0.23076923076923078,
+                        "goals": 0,
                         "shots": 0.2857142857142857
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 569, 
+                },
+                "time": 569,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
+                    "cap": "A",
+                    "name": "TAYLOR HALL",
+                    "number": "4",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 4, 
-                        "goals": 0, 
+                        "attempts": 4,
+                        "goals": 0,
                         "shots": 3
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.2857142857142857, 
-                        "goals": 0, 
+                        "attempts": 0.2857142857142857,
+                        "goals": 0,
                         "shots": 0.375
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 618, 
+                },
+                "time": 618,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "JUSTIN SCHULTZ", 
-                    "number": "19", 
+                    "name": "JUSTIN SCHULTZ",
+                    "number": "19",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 5, 
-                        "goals": 0, 
+                        "attempts": 5,
+                        "goals": 0,
                         "shots": 3
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.3125, 
-                        "goals": 0, 
+                        "attempts": 0.3125,
+                        "goals": 0,
                         "shots": 0.375
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 686, 
+                },
+                "time": 686,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
+                    "name": "BENOIT POULIOT",
+                    "number": "67",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 6, 
-                        "goals": 0, 
+                        "attempts": 6,
+                        "goals": 0,
                         "shots": 4
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.35294117647058826, 
-                        "goals": 0, 
+                        "attempts": 0.35294117647058826,
+                        "goals": 0,
                         "shots": 0.4444444444444444
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 701, 
+                },
+                "time": 701,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
+                    "cap": "A",
+                    "name": "MATT HENDRICKS",
+                    "number": "23",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 7, 
-                        "goals": 0, 
+                        "attempts": 7,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.3888888888888889, 
-                        "goals": 0, 
+                        "attempts": 0.3888888888888889,
+                        "goals": 0,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 723, 
+                },
+                "time": 723,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "LAURI KORPIKOSKI", 
-                    "number": "28", 
+                    "name": "LAURI KORPIKOSKI",
+                    "number": "28",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -3, 
+                        "attempts": -3,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 8, 
-                        "goals": 0, 
+                        "attempts": 8,
+                        "goals": 0,
                         "shots": 6
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42105263157894735, 
-                        "goals": 0, 
+                        "attempts": 0.42105263157894735,
+                        "goals": 0,
                         "shots": 0.5454545454545454
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 755, 
+                },
+                "time": 755,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ERIC GRYBA", 
-                    "number": "62", 
+                    "name": "ERIC GRYBA",
+                    "number": "62",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -2, 
+                        "attempts": -2,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 9, 
-                        "goals": 0, 
+                        "attempts": 9,
+                        "goals": 0,
                         "shots": 6
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45, 
-                        "goals": 0, 
+                        "attempts": 0.45,
+                        "goals": 0,
                         "shots": 0.5454545454545454
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 767, 
+                },
+                "time": 767,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "NAIL YAKUPOV", 
-                    "number": "10", 
+                    "name": "NAIL YAKUPOV",
+                    "number": "10",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -1, 
+                        "attempts": -1,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 10, 
-                        "goals": 0, 
+                        "attempts": 10,
+                        "goals": 0,
                         "shots": 7
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.47619047619047616, 
-                        "goals": 0, 
+                        "attempts": 0.47619047619047616,
+                        "goals": 0,
                         "shots": 0.5833333333333334
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 778, 
+                },
+                "time": 778,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
+                    "cap": "A",
+                    "name": "MATT HENDRICKS",
+                    "number": "23",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 15, 
-                        "goals": 0, 
+                        "attempts": 15,
+                        "goals": 0,
                         "shots": 5
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 11, 
-                        "goals": 0, 
+                        "attempts": 11,
+                        "goals": 0,
                         "shots": 8
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4230769230769231, 
-                        "goals": 0, 
+                        "attempts": 0.4230769230769231,
+                        "goals": 0,
                         "shots": 0.6153846153846154
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 968, 
+                },
+                "time": 968,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "GRIFFIN REINHART", 
-                    "number": "8", 
+                    "name": "GRIFFIN REINHART",
+                    "number": "8",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 16, 
-                        "goals": 0, 
+                        "attempts": 16,
+                        "goals": 0,
                         "shots": 6
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 12, 
-                        "goals": 0, 
+                        "attempts": 12,
+                        "goals": 0,
                         "shots": 8
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42857142857142855, 
-                        "goals": 0, 
+                        "attempts": 0.42857142857142855,
+                        "goals": 0,
                         "shots": 0.5714285714285714
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1027, 
+                },
+                "time": 1027,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
+                    "cap": "A",
+                    "name": "RYAN NUGENT-HOPKINS",
+                    "number": "93",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 16, 
-                        "goals": 0, 
+                        "attempts": 16,
+                        "goals": 0,
                         "shots": 6
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -3, 
+                        "attempts": -3,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 13, 
-                        "goals": 1, 
+                        "attempts": 13,
+                        "goals": 1,
                         "shots": 9
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4482758620689655, 
-                        "goals": 1.0, 
+                        "attempts": 0.4482758620689655,
+                        "goals": 1.0,
                         "shots": 0.6
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1042, 
+                },
+                "time": 1042,
                 "type": "goal"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "GRIFFIN REINHART", 
-                    "number": "8", 
+                    "name": "GRIFFIN REINHART",
+                    "number": "8",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 18, 
-                        "goals": 0, 
+                        "attempts": 18,
+                        "goals": 0,
                         "shots": 7
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 14, 
-                        "goals": 1, 
+                        "attempts": 14,
+                        "goals": 1,
                         "shots": 10
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4375, 
-                        "goals": 1.0, 
+                        "attempts": 0.4375,
+                        "goals": 1.0,
                         "shots": 0.5882352941176471
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1147, 
+                },
+                "time": 1147,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
+                    "cap": "A",
+                    "name": "MATT HENDRICKS",
+                    "number": "23",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 21, 
-                        "goals": 0, 
+                        "attempts": 21,
+                        "goals": 0,
                         "shots": 9
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 15, 
-                        "goals": 1, 
+                        "attempts": 15,
+                        "goals": 1,
                         "shots": 11
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4166666666666667, 
-                        "goals": 1.0, 
+                        "attempts": 0.4166666666666667,
+                        "goals": 1.0,
                         "shots": 0.55
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1245, 
+                },
+                "time": 1245,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "LAURI KORPIKOSKI", 
-                    "number": "28", 
+                    "name": "LAURI KORPIKOSKI",
+                    "number": "28",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 22, 
-                        "goals": 0, 
+                        "attempts": 22,
+                        "goals": 0,
                         "shots": 9
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 16, 
-                        "goals": 1, 
+                        "attempts": 16,
+                        "goals": 1,
                         "shots": 12
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42105263157894735, 
-                        "goals": 1.0, 
+                        "attempts": 0.42105263157894735,
+                        "goals": 1.0,
                         "shots": 0.5714285714285714
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1280, 
+                },
+                "time": 1280,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
+                    "name": "ANDREJ SEKERA",
+                    "number": "2",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 23, 
-                        "goals": 0, 
+                        "attempts": 23,
+                        "goals": 0,
                         "shots": 9
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 17, 
-                        "goals": 1, 
+                        "attempts": 17,
+                        "goals": 1,
                         "shots": 13
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.425, 
-                        "goals": 1.0, 
+                        "attempts": 0.425,
+                        "goals": 1.0,
                         "shots": 0.5909090909090909
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1357, 
+                },
+                "time": 1357,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
+                    "cap": "A",
+                    "name": "TAYLOR HALL",
+                    "number": "4",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 23, 
-                        "goals": 0, 
+                        "attempts": 23,
+                        "goals": 0,
                         "shots": 9
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 18, 
-                        "goals": 1, 
+                        "attempts": 18,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.43902439024390244, 
-                        "goals": 1.0, 
+                        "attempts": 0.43902439024390244,
+                        "goals": 1.0,
                         "shots": 0.6086956521739131
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1359, 
+                },
+                "time": 1359,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "MARK LETESTU", 
-                    "number": "55", 
+                    "name": "MARK LETESTU",
+                    "number": "55",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 25, 
-                        "goals": 0, 
+                        "attempts": 25,
+                        "goals": 0,
                         "shots": 11
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 19, 
-                        "goals": 1, 
+                        "attempts": 19,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4318181818181818, 
-                        "goals": 1.0, 
+                        "attempts": 0.4318181818181818,
+                        "goals": 1.0,
                         "shots": 0.56
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1567, 
+                },
+                "time": 1567,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "GRIFFIN REINHART", 
-                    "number": "8", 
+                    "name": "GRIFFIN REINHART",
+                    "number": "8",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 13
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 20, 
-                        "goals": 1, 
+                        "attempts": 20,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4166666666666667, 
-                        "goals": 0.5, 
+                        "attempts": 0.4166666666666667,
+                        "goals": 0.5,
                         "shots": 0.5185185185185185
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1826, 
+                },
+                "time": 1826,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "MARK FAYNE", 
-                    "number": "5", 
+                    "name": "MARK FAYNE",
+                    "number": "5",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 13
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 21, 
-                        "goals": 1, 
+                        "attempts": 21,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.42857142857142855, 
-                        "goals": 0.5, 
+                        "attempts": 0.42857142857142855,
+                        "goals": 0.5,
                         "shots": 0.5185185185185185
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1832, 
+                },
+                "time": 1832,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "LUKE GAZDIC", 
-                    "number": "20", 
+                    "name": "LUKE GAZDIC",
+                    "number": "20",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 29, 
-                        "goals": 1, 
+                        "attempts": 29,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 22, 
-                        "goals": 1, 
+                        "attempts": 22,
+                        "goals": 1,
                         "shots": 15
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.43137254901960786, 
-                        "goals": 0.5, 
+                        "attempts": 0.43137254901960786,
+                        "goals": 0.5,
                         "shots": 0.5172413793103449
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1864, 
+                },
+                "time": 1864,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "OSCAR KLEFBOM", 
-                    "number": "77", 
+                    "name": "OSCAR KLEFBOM",
+                    "number": "77",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 29, 
-                        "goals": 1, 
+                        "attempts": 29,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -6, 
+                        "attempts": -6,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 23, 
-                        "goals": 1, 
+                        "attempts": 23,
+                        "goals": 1,
                         "shots": 15
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4423076923076923, 
-                        "goals": 0.5, 
+                        "attempts": 0.4423076923076923,
+                        "goals": 0.5,
                         "shots": 0.5172413793103449
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1875, 
+                },
+                "time": 1875,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
+                    "name": "TEDDY PURCELL",
+                    "number": "16",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 29, 
-                        "goals": 1, 
+                        "attempts": 29,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 24, 
-                        "goals": 1, 
+                        "attempts": 24,
+                        "goals": 1,
                         "shots": 15
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4528301886792453, 
-                        "goals": 0.5, 
+                        "attempts": 0.4528301886792453,
+                        "goals": 0.5,
                         "shots": 0.5172413793103449
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1934, 
+                },
+                "time": 1934,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
+                    "name": "TEDDY PURCELL",
+                    "number": "16",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 29, 
-                        "goals": 1, 
+                        "attempts": 29,
+                        "goals": 1,
                         "shots": 14
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 25, 
-                        "goals": 1, 
+                        "attempts": 25,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.46296296296296297, 
-                        "goals": 0.5, 
+                        "attempts": 0.46296296296296297,
+                        "goals": 0.5,
                         "shots": 0.5333333333333333
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1939, 
+                },
+                "time": 1939,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "MARK LETESTU", 
-                    "number": "55", 
+                    "name": "MARK LETESTU",
+                    "number": "55",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 31, 
-                        "goals": 1, 
+                        "attempts": 31,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -5, 
+                        "attempts": -5,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 26, 
-                        "goals": 1, 
+                        "attempts": 26,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45614035087719296, 
-                        "goals": 0.5, 
+                        "attempts": 0.45614035087719296,
+                        "goals": 0.5,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2029, 
+                },
+                "time": 2029,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
+                    "cap": "A",
+                    "name": "MATT HENDRICKS",
+                    "number": "23",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 31, 
-                        "goals": 1, 
+                        "attempts": 31,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -4, 
+                        "attempts": -4,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 27, 
-                        "goals": 1, 
+                        "attempts": 27,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.46551724137931033, 
-                        "goals": 0.5, 
+                        "attempts": 0.46551724137931033,
+                        "goals": 0.5,
                         "shots": 0.5151515151515151
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2056, 
+                },
+                "time": 2056,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
+                    "name": "ANDREJ SEKERA",
+                    "number": "2",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 31, 
-                        "goals": 1, 
+                        "attempts": 31,
+                        "goals": 1,
                         "shots": 16
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -3, 
+                        "attempts": -3,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
+                        "attempts": 28,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4745762711864407, 
-                        "goals": 0.5, 
+                        "attempts": 0.4745762711864407,
+                        "goals": 0.5,
                         "shots": 0.5151515151515151
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2060, 
+                },
+                "time": 2060,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
+                    "cap": "A",
+                    "name": "RYAN NUGENT-HOPKINS",
+                    "number": "93",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 42, 
-                        "goals": 1, 
+                        "attempts": 42,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -13, 
+                        "attempts": -13,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 29, 
-                        "goals": 1, 
+                        "attempts": 29,
+                        "goals": 1,
                         "shots": 17
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4084507042253521, 
-                        "goals": 0.5, 
+                        "attempts": 0.4084507042253521,
+                        "goals": 0.5,
                         "shots": 0.4358974358974359
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2435, 
+                },
+                "time": 2435,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ANTON LANDER", 
-                    "number": "51", 
+                    "name": "ANTON LANDER",
+                    "number": "51",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 42, 
-                        "goals": 1, 
+                        "attempts": 42,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -12, 
+                        "attempts": -12,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 30, 
-                        "goals": 1, 
+                        "attempts": 30,
+                        "goals": 1,
                         "shots": 18
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4166666666666667, 
-                        "goals": 0.5, 
+                        "attempts": 0.4166666666666667,
+                        "goals": 0.5,
                         "shots": 0.45
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2479, 
+                },
+                "time": 2479,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "CONNOR MCDAVID", 
-                    "number": "97", 
+                    "name": "CONNOR MCDAVID",
+                    "number": "97",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 42, 
-                        "goals": 1, 
+                        "attempts": 42,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -11, 
+                        "attempts": -11,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 31, 
-                        "goals": 1, 
+                        "attempts": 31,
+                        "goals": 1,
                         "shots": 19
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4246575342465753, 
-                        "goals": 0.5, 
+                        "attempts": 0.4246575342465753,
+                        "goals": 0.5,
                         "shots": 0.4634146341463415
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2513, 
+                },
+                "time": 2513,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "OSCAR KLEFBOM", 
-                    "number": "77", 
+                    "name": "OSCAR KLEFBOM",
+                    "number": "77",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 42, 
-                        "goals": 1, 
+                        "attempts": 42,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -10, 
+                        "attempts": -10,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 32, 
-                        "goals": 1, 
+                        "attempts": 32,
+                        "goals": 1,
                         "shots": 19
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.43243243243243246, 
-                        "goals": 0.5, 
+                        "attempts": 0.43243243243243246,
+                        "goals": 0.5,
                         "shots": 0.4634146341463415
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2532, 
+                },
+                "time": 2532,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "JUSTIN SCHULTZ", 
-                    "number": "19", 
+                    "name": "JUSTIN SCHULTZ",
+                    "number": "19",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 43, 
-                        "goals": 1, 
+                        "attempts": 43,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -10, 
+                        "attempts": -10,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 33, 
-                        "goals": 1, 
+                        "attempts": 33,
+                        "goals": 1,
                         "shots": 19
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4342105263157895, 
-                        "goals": 0.5, 
+                        "attempts": 0.4342105263157895,
+                        "goals": 0.5,
                         "shots": 0.4634146341463415
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2569, 
+                },
+                "time": 2569,
                 "type": "miss"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
+                    "cap": "A",
+                    "name": "TAYLOR HALL",
+                    "number": "4",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 43, 
-                        "goals": 1, 
+                        "attempts": 43,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 34, 
-                        "goals": 1, 
+                        "attempts": 34,
+                        "goals": 1,
                         "shots": 20
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.44155844155844154, 
-                        "goals": 0.5, 
+                        "attempts": 0.44155844155844154,
+                        "goals": 0.5,
                         "shots": 0.47619047619047616
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2578, 
+                },
+                "time": 2578,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "CONNOR MCDAVID", 
-                    "number": "97", 
+                    "name": "CONNOR MCDAVID",
+                    "number": "97",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 43, 
-                        "goals": 1, 
+                        "attempts": 43,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 35, 
-                        "goals": 1, 
+                        "attempts": 35,
+                        "goals": 1,
                         "shots": 21
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.44871794871794873, 
-                        "goals": 0.5, 
+                        "attempts": 0.44871794871794873,
+                        "goals": 0.5,
                         "shots": 0.4883720930232558
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2586, 
+                },
+                "time": 2586,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
+                    "cap": "A",
+                    "name": "MATT HENDRICKS",
+                    "number": "23",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 44, 
-                        "goals": 1, 
+                        "attempts": 44,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 36, 
-                        "goals": 1, 
+                        "attempts": 36,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45, 
-                        "goals": 0.5, 
+                        "attempts": 0.45,
+                        "goals": 0.5,
                         "shots": 0.5
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2699, 
+                },
+                "time": 2699,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
+                    "name": "TEDDY PURCELL",
+                    "number": "16",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 45, 
-                        "goals": 1, 
+                        "attempts": 45,
+                        "goals": 1,
                         "shots": 23
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 37, 
-                        "goals": 1, 
+                        "attempts": 37,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45121951219512196, 
-                        "goals": 0.5, 
+                        "attempts": 0.45121951219512196,
+                        "goals": 0.5,
                         "shots": 0.4888888888888889
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2768, 
+                },
+                "time": 2768,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ERIC GRYBA", 
-                    "number": "62", 
+                    "name": "ERIC GRYBA",
+                    "number": "62",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 46, 
-                        "goals": 1, 
+                        "attempts": 46,
+                        "goals": 1,
                         "shots": 23
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 38, 
-                        "goals": 1, 
+                        "attempts": 38,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4523809523809524, 
-                        "goals": 0.5, 
+                        "attempts": 0.4523809523809524,
+                        "goals": 0.5,
                         "shots": 0.4888888888888889
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2845, 
+                },
+                "time": 2845,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
+                    "name": "TEDDY PURCELL",
+                    "number": "16",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 48, 
-                        "goals": 1, 
+                        "attempts": 48,
+                        "goals": 1,
                         "shots": 24
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 39, 
-                        "goals": 1, 
+                        "attempts": 39,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4482758620689655, 
-                        "goals": 0.5, 
+                        "attempts": 0.4482758620689655,
+                        "goals": 0.5,
                         "shots": 0.4782608695652174
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2926, 
+                },
+                "time": 2926,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
+                    "cap": "A",
+                    "name": "RYAN NUGENT-HOPKINS",
+                    "number": "93",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 48, 
-                        "goals": 1, 
+                        "attempts": 48,
+                        "goals": 1,
                         "shots": 24
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 40, 
-                        "goals": 1, 
+                        "attempts": 40,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45454545454545453, 
-                        "goals": 0.5, 
+                        "attempts": 0.45454545454545453,
+                        "goals": 0.5,
                         "shots": 0.4782608695652174
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2932, 
+                },
+                "time": 2932,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "JUSTIN SCHULTZ", 
-                    "number": "19", 
+                    "name": "JUSTIN SCHULTZ",
+                    "number": "19",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 48, 
-                        "goals": 1, 
+                        "attempts": 48,
+                        "goals": 1,
                         "shots": 24
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": 0
-                    }, 
+                    },
                     "for": {
-                        "attempts": 41, 
-                        "goals": 1, 
+                        "attempts": 41,
+                        "goals": 1,
                         "shots": 22
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4606741573033708, 
-                        "goals": 0.5, 
+                        "attempts": 0.4606741573033708,
+                        "goals": 0.5,
                         "shots": 0.4782608695652174
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 2933, 
+                },
+                "time": 2933,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "NAIL YAKUPOV", 
-                    "number": "10", 
+                    "name": "NAIL YAKUPOV",
+                    "number": "10",
                     "pos": "R"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 53, 
-                        "goals": 2, 
+                        "attempts": 53,
+                        "goals": 2,
                         "shots": 27
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -11, 
+                        "attempts": -11,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 42, 
-                        "goals": 1, 
+                        "attempts": 42,
+                        "goals": 1,
                         "shots": 23
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4421052631578947, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.4421052631578947,
+                        "goals": 0.3333333333333333,
                         "shots": 0.46
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3243, 
+                },
+                "time": 3243,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "MARK FAYNE", 
-                    "number": "5", 
+                    "name": "MARK FAYNE",
+                    "number": "5",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 53, 
-                        "goals": 2, 
+                        "attempts": 53,
+                        "goals": 2,
                         "shots": 27
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -10, 
+                        "attempts": -10,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 43, 
-                        "goals": 1, 
+                        "attempts": 43,
+                        "goals": 1,
                         "shots": 24
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4479166666666667, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.4479166666666667,
+                        "goals": 0.3333333333333333,
                         "shots": 0.47058823529411764
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3312, 
+                },
+                "time": 3312,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ANTON SLEPYSHEV", 
-                    "number": "42", 
+                    "name": "ANTON SLEPYSHEV",
+                    "number": "42",
                     "pos": "L"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 53, 
-                        "goals": 2, 
+                        "attempts": 53,
+                        "goals": 2,
                         "shots": 27
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -9, 
+                        "attempts": -9,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 44, 
-                        "goals": 1, 
+                        "attempts": 44,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4536082474226804, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.4536082474226804,
+                        "goals": 0.3333333333333333,
                         "shots": 0.4807692307692308
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3328, 
+                },
+                "time": 3328,
                 "type": "shot"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "GRIFFIN REINHART", 
-                    "number": "8", 
+                    "name": "GRIFFIN REINHART",
+                    "number": "8",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 53, 
-                        "goals": 2, 
+                        "attempts": 53,
+                        "goals": 2,
                         "shots": 27
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 45, 
-                        "goals": 1, 
+                        "attempts": 45,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.45918367346938777, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.45918367346938777,
+                        "goals": 0.3333333333333333,
                         "shots": 0.4807692307692308
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3343, 
+                },
+                "time": 3343,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "JUSTIN SCHULTZ", 
-                    "number": "19", 
+                    "name": "JUSTIN SCHULTZ",
+                    "number": "19",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 54, 
-                        "goals": 2, 
+                        "attempts": 54,
+                        "goals": 2,
                         "shots": 28
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 46, 
-                        "goals": 1, 
+                        "attempts": 46,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.46, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.46,
+                        "goals": 0.3333333333333333,
                         "shots": 0.4716981132075472
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3392, 
+                },
+                "time": 3392,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
+                    "name": "ANDREJ SEKERA",
+                    "number": "2",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 55, 
-                        "goals": 2, 
+                        "attempts": 55,
+                        "goals": 2,
                         "shots": 29
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -8, 
+                        "attempts": -8,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 47, 
-                        "goals": 1, 
+                        "attempts": 47,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.46078431372549017, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.46078431372549017,
+                        "goals": 0.3333333333333333,
                         "shots": 0.46296296296296297
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3439, 
+                },
+                "time": 3439,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
+                    "name": "ANDREJ SEKERA",
+                    "number": "2",
                     "pos": "D"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 55, 
-                        "goals": 2, 
+                        "attempts": 55,
+                        "goals": 2,
                         "shots": 29
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 48, 
-                        "goals": 1, 
+                        "attempts": 48,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.46601941747572817, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.46601941747572817,
+                        "goals": 0.3333333333333333,
                         "shots": 0.46296296296296297
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3441, 
+                },
+                "time": 3441,
                 "type": "block"
-            }, 
+            },
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
+                    "cap": "A",
+                    "name": "RYAN NUGENT-HOPKINS",
+                    "number": "93",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 56, 
-                        "goals": 2, 
+                        "attempts": 56,
+                        "goals": 2,
                         "shots": 30
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -7, 
+                        "attempts": -7,
                         "goals": -1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 49, 
-                        "goals": 1, 
+                        "attempts": 49,
+                        "goals": 1,
                         "shots": 25
-                    }, 
+                    },
                     "ratio": {
-                        "attempts": 0.4666666666666667, 
-                        "goals": 0.3333333333333333, 
+                        "attempts": 0.4666666666666667,
+                        "goals": 0.3333333333333333,
                         "shots": 0.45454545454545453
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 3563, 
+                },
+                "time": 3563,
                 "type": "miss"
             }
-        ], 
+        ],
         "goals": [
             {
                 "against": {
                     "abv": "STL"
-                }, 
+                },
                 "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
+                    "cap": "A",
+                    "name": "RYAN NUGENT-HOPKINS",
+                    "number": "93",
                     "pos": "C"
-                }, 
+                },
                 "stats": {
                     "against": {
-                        "attempts": 16, 
+                        "attempts": 16,
                         "goals": 0
-                    }, 
+                    },
                     "dif": {
-                        "attempts": -3, 
+                        "attempts": -3,
                         "goals": 1
-                    }, 
+                    },
                     "for": {
-                        "attempts": 13, 
+                        "attempts": 13,
                         "goals": 1
-                    }, 
+                    },
                     "ratio": {
                         "attempts": 0.4482758620689655
                     }
-                }, 
+                },
                 "team": {
                     "abv": "EDM"
-                }, 
-                "time": 1042, 
+                },
+                "time": 1042,
                 "type": "goal"
             }
-        ], 
-        "number": 1, 
+        ],
+        "number": 1,
         "stats": {
             "goals": {
-                "1": 1, 
-                "2": 0, 
-                "3": 0, 
-                "4": 0, 
-                "5": 0, 
-                "reg": 1, 
+                "1": 1,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "reg": 1,
                 "total": 1
             }
-        }, 
+        },
         "team": {
             "abv": "EDM"
         }
-    }, 
-    "home": 0, 
+    },
+    "home": 0,
     "ratio": {
         "goals": {
-            "1": 1, 
-            "2": 0, 
-            "3": 0, 
-            "4": 0, 
-            "5": 0, 
-            "reg": 0, 
+            "1": 1,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "reg": 0,
             "total": 0
         }
-    }, 
+    },
     "results": {
-        "gameLength": 3600, 
-        "type": "REG", 
+        "gameLength": 3600,
+        "type": "REG",
         "win": 0
-    }, 
+    },
     "season": 2015
 }
 return data;}

@@ -94,7 +94,7 @@ line.periods {
 }
 .game-summary {
   width: 100%;
-  height: 75vh;
+  height: 65vh;
 }
 #game-graph {
   width: 100%;
@@ -110,4 +110,7 @@ g.grid .domain {
 }
 g.grid .tick line {
   stroke: #eeeeee;
+}
+.axisTick {
+  font-size: 10px;
 }

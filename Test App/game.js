@@ -1,7 +1,6 @@
-// For test app the method for loading data changes.
-// When the webserver is running, it will get it from there
-// but for the static example, this is not possible so just 
-// include the data inside this script.
+
+//Data loading sing this script rather
+//than webserver
 // Get the url for the data.
 //var urlString = String(window.location);
 
@@ -15,11 +14,11 @@
 
 // Open the json, parse and pass data to drawing functions.
 //d3.json(dataURL, function(error, data) {
-//    drawGameGraph(data);
+//   drawGameGraph(data);
 //    statsGraph(data);
 //});
 
-var data = loadData();
+var data = getData();
 
 drawGameGraph(data);
 statsGraph(data);
@@ -266,16 +265,91 @@ function drawGameGraph(data) {
     svg.append("text")
             .attr("text-anchor", "middle")
             .attr("transform", "translate("+ (width/4) +",-20)")
-            .text("<- " + data.for.team.abv + " Advantage")
+            .text("<- " + data.for.team.abv + " Attempt Advantage")
             .on('mouseover', attemptsTip.show)
             .on('mouseout', attemptsTip.hide);
 
     svg.append("text")
             .attr("text-anchor", "middle")
             .attr("transform", "translate("+ (width - (width/4)) +",-20)")
-            .text(data.against.team.abv + " Advantage ->")
+            .text(data.against.team.abv + " Attempt Advantage ->")
             .on('mouseover', attemptsTip.show)
             .on('mouseout', attemptsTip.hide);
+
+    // Labels for the y axis (the time)
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ (width+10) +","+(height/2)+")rotate(90)")
+            .text("<-Time (mins)->")
+
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ (0-10) +","+(height/2)+")rotate(270)")
+            .text("<-Time (mins)->")
+
+    // Add lines for when a team is expected to score
+
+    //Create a tool tip for the average for attempts
+    var avgForAttemptsTip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html("Median attempt difference at the<br>" +
+              "time of a goal in the NHL. When the <br>" +
+              "plot is left of this line, " + data.for.team.abv + " is more<br>" +
+              "likey to score.");
+
+    //Create a tool tip for the average against attempts
+    var avgAgainstAttemptsTip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html("Median attempt difference at the<br>" +
+              "time of a goal in the NHL. When the <br>" +
+              "plot is right of this line, " + data.against.team.abv + " is more<br>" +
+              "likey to score.");
+
+    svg.call(avgForAttemptsTip);
+    svg.call(avgAgainstAttemptsTip);
+
+    // For team
+    svg.append("line")
+        .attr("x1", x(2))  //<<== change your code here
+        .attr("y1", 0)
+        .attr("x2", x(2))  //<<== and here
+        .attr("y2", height)
+        .style("stroke-width", 1)
+        .style("fill", "none")
+        .attr("class", "forTeamAverage")
+        .on('mouseover', avgForAttemptsTip.show)
+        .on('mouseout', avgForAttemptsTip.hide);
+
+    // Against team
+    svg.append("line")
+        .attr("x1", x(-2))  //<<== change your code here
+        .attr("y1", 0)
+        .attr("x2", x(-2))  //<<== and here
+        .attr("y2", height)
+        .style("stroke-width", 1)
+        .style("fill", "none")
+        .attr("class", "againstTeamAverage")
+        .on('mouseover', avgAgainstAttemptsTip.show)
+        .on('mouseout', avgAgainstAttemptsTip.hide);
+
+    // Labels for the lines
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ x(2) +",-6)")
+            .text("MED(2)")
+            .attr("class", "axisTick")
+            .on('mouseover', avgForAttemptsTip.show)
+            .on('mouseout', avgForAttemptsTip.hide);
+
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ x(-2) +",-6)")
+            .text("MED(2)")
+            .attr("class", "axisTick")
+            .on('mouseover', avgAgainstAttemptsTip.show)
+            .on('mouseout', avgAgainstAttemptsTip.hide);
 
     // Add the statLine to the graph.
     var statLine = svg.append("path")
@@ -391,7 +465,7 @@ function drawGameGraph(data) {
     // Against Goals - Circles
     // Select the against goals circle containers.
     var againstNode = svg.selectAll("g againstCircles")
-        .data(data.against.goals)
+        .data(data.against.goals);
 
     // Draw the against goals circle containers.
     var againstNodeEnter = againstNode.enter()
@@ -635,6 +709,12 @@ function zoomGameGraph(data, start, end, x, y, width, height) {
     // Move the goal circles
     // Goals moved will be set to visible. Everything else will
     // be hidden.
+    var forText = svg.selectAll("g.forTeamGoal text")
+      .data(forGoals)
+      .text(function(d) {
+          return d.stats.for.goals
+      })
+
     var forCircles = svg.selectAll("g.forTeamGoal")
         .data(forGoals);
     forCircles.transition()
@@ -644,15 +724,24 @@ function zoomGameGraph(data, start, end, x, y, width, height) {
                 "," +
                 y(d.time) + ")";
         })
+
         .style("visibility", "visible")
         .duration(750);
     forCircles.exit()
         .transition()
         .style("visibility", "hidden");
 
+
+
     // Move against goals.
     // Goals moved will be set to visible. Everything else will
     // be hidden.
+    var againstText = svg.selectAll("g.againstTeamGoal text")
+      .data(againstGoals)
+      .text(function(d) {
+          return d.stats.against.goals
+      })
+
     var againstCircles = svg.selectAll("g.againstTeamGoal")
         .data(againstGoals);
     againstCircles.transition()
@@ -794,7 +883,7 @@ function statsGraph(data) {
         .attr("class", "bar-labels")
         .attr("text-anchor", "middle")
         .attr("y", function(d) {
-            return y(d.type) + y.bandwidth() - 5;
+            return y(d.type) + y.bandwidth() - 3;
         })
         .attr("x", function(d) {
             return graphWidth / 2;
@@ -813,7 +902,7 @@ function statsGraph(data) {
         .attr("class", "bartext")
         .attr("text-anchor", "middle")
         .attr("y", function(d) {
-            return y(d.type) + y.bandwidth() - 2;
+            return y(d.type) + y.bandwidth() - 3;
         })
         .attr("x", function(d) {
           if (d.for) {
@@ -821,7 +910,7 @@ function statsGraph(data) {
           else{
             return graphWidth - (graphWidth / 4);}})
         .text(function(d) {
-            return d.total + "(" + d.ratio.toFixed(2) + ")";
+              return (d.ratio*100).toFixed(2)+ "% (" + d.total + ")";
         })
 
     // Add handlers to the period buttons to allow user to zoom to a
@@ -900,7 +989,7 @@ function zoomStats(data, start, end, x, y) {
         .data(statSums);
     stats.transition()
         .text(function(d) {
-            return d.total + "(" + d.ratio.toFixed(2) + ")";
+            return (d.ratio*100).toFixed(2)+ "% (" + d.total + ")";
         })
 }
 //#############################################
@@ -935,7 +1024,7 @@ function majorAxisLabels(time, gameLength) {
     } else if (time == gameLength) {
         return "END";
     } else if (time % 1200 == 0) {
-        return time / 1200 + " INT"
+        return time / 60
     }
 }
 
@@ -1118,9 +1207,9 @@ function shiftAttemptsDif(events,shift){
   return events;
 }
 
-function loadData(){
+function getData(){
 return {
-    "_id": "2015534h", 
+    "_id": "201528a", 
     "against": {
         "attempts": [
             {
@@ -1128,73 +1217,75 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "MARK LETESTU", 
-                    "number": "55", 
-                    "pos": "C"
+                    "cap": "A", 
+                    "name": "DAN HAMHUIS", 
+                    "number": "2", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 1, 
                         "goals": 0, 
-                        "shots": 0
+                        "shots": 1
                     }, 
                     "dif": {
-                        "attempts": 7, 
+                        "attempts": 0, 
                         "goals": 0
                     }, 
                     "for": {
-                        "attempts": 8, 
+                        "attempts": 1, 
                         "goals": 0, 
-                        "shots": 5
+                        "shots": 0
                     }, 
                     "ratio": {
-                        "attempts": 0.8888888888888888, 
+                        "attempts": 0.5, 
                         "goals": 0, 
-                        "shots": 1.0
+                        "shots": 0.0
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 238, 
-                "type": "miss"
+                "time": 44, 
+                "type": "shot"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
-                    "pos": "R"
+                    "cap": "A", 
+                    "name": "DANIEL SEDIN", 
+                    "number": "22", 
+                    "pos": "L"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 2, 
                         "goals": 0, 
-                        "shots": 1
+                        "shots": 2
                     }, 
                     "dif": {
-                        "attempts": 6, 
+                        "attempts": -1, 
                         "goals": 0
                     }, 
                     "for": {
-                        "attempts": 8, 
+                        "attempts": 1, 
                         "goals": 0, 
-                        "shots": 5
+                        "shots": 0
                     }, 
                     "ratio": {
-                        "attempts": 0.8, 
+                        "attempts": 0.3333333333333333, 
                         "goals": 0, 
-                        "shots": 0.8333333333333334
+                        "shots": 0.0
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 304, 
+                "time": 70, 
                 "type": "shot"
             }, 
             {
@@ -1202,73 +1293,73 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "ERIC GRYBA", 
-                    "number": "62", 
-                    "pos": "D"
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 3, 
                         "goals": 0, 
-                        "shots": 1
+                        "shots": 3
                     }, 
                     "dif": {
-                        "attempts": 5, 
+                        "attempts": -2, 
                         "goals": 0
                     }, 
                     "for": {
-                        "attempts": 8, 
+                        "attempts": 1, 
                         "goals": 0, 
-                        "shots": 5
+                        "shots": 0
                     }, 
                     "ratio": {
-                        "attempts": 0.7272727272727273, 
+                        "attempts": 0.25, 
                         "goals": 0, 
-                        "shots": 0.8333333333333334
+                        "shots": 0.0
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 311, 
-                "type": "block"
+                "time": 76, 
+                "type": "shot"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
-                    "pos": "C"
+                    "name": "LUCA SBISA", 
+                    "number": "5", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 4, 
                         "goals": 0, 
-                        "shots": 1
+                        "shots": 3
                     }, 
                     "dif": {
-                        "attempts": 6, 
+                        "attempts": -3, 
                         "goals": 0
                     }, 
                     "for": {
-                        "attempts": 10, 
+                        "attempts": 1, 
                         "goals": 0, 
-                        "shots": 5
+                        "shots": 0
                     }, 
                     "ratio": {
-                        "attempts": 0.7142857142857143, 
+                        "attempts": 0.2, 
                         "goals": 0, 
-                        "shots": 0.8333333333333334
+                        "shots": 0.0
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 395, 
+                "time": 84, 
                 "type": "block"
             }, 
             {
@@ -1276,73 +1367,74 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "IIRO PAKARINEN", 
-                    "number": "26", 
-                    "pos": "R"
+                    "name": "JARED MCCANN", 
+                    "number": "91", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 5, 
                         "goals": 0, 
-                        "shots": 1
+                        "shots": 4
                     }, 
                     "dif": {
-                        "attempts": 5, 
+                        "attempts": -3, 
                         "goals": 0
                     }, 
                     "for": {
-                        "attempts": 10, 
+                        "attempts": 2, 
                         "goals": 0, 
-                        "shots": 5
+                        "shots": 1
                     }, 
                     "ratio": {
-                        "attempts": 0.6666666666666666, 
+                        "attempts": 0.2857142857142857, 
                         "goals": 0, 
-                        "shots": 0.8333333333333334
+                        "shots": 0.2
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 402, 
-                "type": "block"
+                "time": 155, 
+                "type": "shot"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "LAURI KORPIKOSKI", 
-                    "number": "28", 
-                    "pos": "L"
+                    "cap": "c", 
+                    "name": "HENRIK SEDIN", 
+                    "number": "33", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 6, 
                         "goals": 0, 
-                        "shots": 1
+                        "shots": 4
                     }, 
                     "dif": {
-                        "attempts": 8, 
-                        "goals": 0
+                        "attempts": 3, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 14, 
-                        "goals": 0, 
+                        "attempts": 9, 
+                        "goals": 1, 
                         "shots": 6
                     }, 
                     "ratio": {
-                        "attempts": 0.7, 
-                        "goals": 0, 
-                        "shots": 0.8571428571428571
+                        "attempts": 0.6, 
+                        "goals": 1.0, 
+                        "shots": 0.6
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 518, 
+                "time": 342, 
                 "type": "block"
             }, 
             {
@@ -1350,36 +1442,36 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "LAURI KORPIKOSKI", 
-                    "number": "28", 
-                    "pos": "L"
+                    "name": "CHRISTOPHER TANEV", 
+                    "number": "8", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 7, 
                         "goals": 0, 
-                        "shots": 1
+                        "shots": 4
                     }, 
                     "dif": {
-                        "attempts": 7, 
-                        "goals": 0
+                        "attempts": 2, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 14, 
-                        "goals": 0, 
+                        "attempts": 9, 
+                        "goals": 1, 
                         "shots": 6
                     }, 
                     "ratio": {
-                        "attempts": 0.6666666666666666, 
-                        "goals": 0, 
-                        "shots": 0.8571428571428571
+                        "attempts": 0.5625, 
+                        "goals": 1.0, 
+                        "shots": 0.6
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 523, 
+                "time": 353, 
                 "type": "miss"
             }, 
             {
@@ -1387,149 +1479,74 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
-                    "pos": "C"
+                    "cap": "A", 
+                    "name": "DAN HAMHUIS", 
+                    "number": "2", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 8, 
                         "goals": 0, 
-                        "shots": 2
+                        "shots": 4
                     }, 
                     "dif": {
-                        "attempts": 6, 
-                        "goals": 0
+                        "attempts": 1, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 14, 
-                        "goals": 0, 
+                        "attempts": 9, 
+                        "goals": 1, 
                         "shots": 6
                     }, 
                     "ratio": {
-                        "attempts": 0.6363636363636364, 
-                        "goals": 0, 
-                        "shots": 0.75
+                        "attempts": 0.5294117647058824, 
+                        "goals": 1.0, 
+                        "shots": 0.6
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 530, 
-                "type": "shot"
+                "time": 358, 
+                "type": "block"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
-                    "pos": "C"
+                    "name": "ADAM CRACKNELL", 
+                    "number": "24", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 9, 
                         "goals": 0, 
-                        "shots": 2
+                        "shots": 5
                     }, 
                     "dif": {
-                        "attempts": 6, 
-                        "goals": 0
+                        "attempts": 1, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
-                    }, 
-                    "ratio": {
-                        "attempts": 0.625, 
-                        "goals": 0, 
-                        "shots": 0.7777777777777778
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 578, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "DARNELL NURSE", 
-                    "number": "25", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
                         "attempts": 10, 
-                        "goals": 0, 
-                        "shots": 2
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
+                        "goals": 1, 
                         "shots": 7
                     }, 
                     "ratio": {
-                        "attempts": 0.6, 
-                        "goals": 0, 
-                        "shots": 0.7777777777777778
+                        "attempts": 0.5263157894736842, 
+                        "goals": 1.0, 
+                        "shots": 0.5833333333333334
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 584, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "JORDAN EBERLE", 
-                    "number": "14", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 11, 
-                        "goals": 0, 
-                        "shots": 3
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5769230769230769, 
-                        "goals": 0, 
-                        "shots": 0.7
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 593, 
+                "time": 421, 
                 "type": "shot"
             }, 
             {
@@ -1537,36 +1554,148 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 10, 
+                        "goals": 0, 
+                        "shots": 5
+                    }, 
+                    "dif": {
+                        "attempts": 0, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 10, 
+                        "goals": 1, 
+                        "shots": 7
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5, 
+                        "goals": 1.0, 
+                        "shots": 0.5833333333333334
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 430, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DANIEL SEDIN", 
+                    "number": "22", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 11, 
+                        "goals": 0, 
+                        "shots": 6
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 12, 
+                        "goals": 1, 
+                        "shots": 9
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5217391304347826, 
+                        "goals": 1.0, 
+                        "shots": 0.6
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 637, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "YANNICK WEBER", 
+                    "number": "6", 
                     "pos": "D"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 12, 
                         "goals": 0, 
-                        "shots": 3
+                        "shots": 6
                     }, 
                     "dif": {
-                        "attempts": 3, 
-                        "goals": 0
+                        "attempts": 0, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
+                        "attempts": 12, 
+                        "goals": 1, 
+                        "shots": 9
                     }, 
                     "ratio": {
-                        "attempts": 0.5555555555555556, 
-                        "goals": 0, 
-                        "shots": 0.7
+                        "attempts": 0.5, 
+                        "goals": 1.0, 
+                        "shots": 0.6
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 644, 
+                "time": 671, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "MATT BARTKOWSKI", 
+                    "number": "44", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 13, 
+                        "goals": 0, 
+                        "shots": 6
+                    }, 
+                    "dif": {
+                        "attempts": -1, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 12, 
+                        "goals": 1, 
+                        "shots": 9
+                    }, 
+                    "ratio": {
+                        "attempts": 0.48, 
+                        "goals": 1.0, 
+                        "shots": 0.6
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 675, 
                 "type": "block"
             }, 
             {
@@ -1574,73 +1703,36 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "IIRO PAKARINEN", 
-                    "number": "26", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 13, 
-                        "goals": 0, 
-                        "shots": 4
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5357142857142857, 
-                        "goals": 0, 
-                        "shots": 0.6363636363636364
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 681, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "NIKITA NIKITIN", 
-                    "number": "86", 
-                    "pos": "D"
+                    "name": "ALEXANDRE BURROWS", 
+                    "number": "14", 
+                    "pos": "L"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 14, 
                         "goals": 0, 
-                        "shots": 4
+                        "shots": 6
                     }, 
                     "dif": {
-                        "attempts": 1, 
-                        "goals": 0
+                        "attempts": 0, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
+                        "attempts": 14, 
+                        "goals": 1, 
+                        "shots": 11
                     }, 
                     "ratio": {
-                        "attempts": 0.5172413793103449, 
-                        "goals": 0, 
-                        "shots": 0.6363636363636364
+                        "attempts": 0.5, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 692, 
+                "time": 756, 
                 "type": "miss"
             }, 
             {
@@ -1648,148 +1740,221 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "JUSTIN SCHULTZ", 
-                    "number": "19", 
-                    "pos": "D"
+                    "name": "JANNIK HANSEN", 
+                    "number": "36", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 15, 
                         "goals": 0, 
-                        "shots": 4
+                        "shots": 6
                     }, 
                     "dif": {
-                        "attempts": 0, 
-                        "goals": 0
+                        "attempts": -1, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
+                        "attempts": 14, 
+                        "goals": 1, 
+                        "shots": 11
                     }, 
                     "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0, 
-                        "shots": 0.6363636363636364
+                        "attempts": 0.4827586206896552, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 698, 
-                "type": "miss"
+                "time": 788, 
+                "type": "block"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "DARNELL NURSE", 
-                    "number": "25", 
+                    "name": "MATT BARTKOWSKI", 
+                    "number": "44", 
                     "pos": "D"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 16, 
                         "goals": 0, 
-                        "shots": 4
+                        "shots": 6
                     }, 
                     "dif": {
-                        "attempts": -1, 
-                        "goals": 0
+                        "attempts": 0, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
+                        "attempts": 16, 
+                        "goals": 1, 
+                        "shots": 11
                     }, 
                     "ratio": {
-                        "attempts": 0.4838709677419355, 
-                        "goals": 0, 
-                        "shots": 0.6363636363636364
+                        "attempts": 0.5, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 705, 
-                "type": "block"
+                "time": 919, 
+                "type": "miss"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
+                    "name": "BEN HUTTON", 
+                    "number": "27", 
                     "pos": "D"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 17, 
                         "goals": 0, 
-                        "shots": 4
-                    }, 
-                    "dif": {
-                        "attempts": -2, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
                         "shots": 7
                     }, 
+                    "dif": {
+                        "attempts": 3, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 20, 
+                        "goals": 1, 
+                        "shots": 12
+                    }, 
                     "ratio": {
-                        "attempts": 0.46875, 
-                        "goals": 0, 
-                        "shots": 0.6363636363636364
+                        "attempts": 0.5405405405405406, 
+                        "goals": 1.0, 
+                        "shots": 0.631578947368421
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 796, 
-                "type": "block"
+                "time": 982, 
+                "type": "shot"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 18, 
                         "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "dif": {
-                        "attempts": -3, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
                         "shots": 7
                     }, 
+                    "dif": {
+                        "attempts": 2, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 20, 
+                        "goals": 1, 
+                        "shots": 12
+                    }, 
                     "ratio": {
-                        "attempts": 0.45454545454545453, 
-                        "goals": 0, 
-                        "shots": 0.5833333333333334
+                        "attempts": 0.5263157894736842, 
+                        "goals": 1.0, 
+                        "shots": 0.631578947368421
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 815, 
+                "time": 1026, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "MATT BARTKOWSKI", 
+                    "number": "44", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 19, 
+                        "goals": 0, 
+                        "shots": 7
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 20, 
+                        "goals": 1, 
+                        "shots": 12
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5128205128205128, 
+                        "goals": 1.0, 
+                        "shots": 0.631578947368421
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 1033, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "ADAM CRACKNELL", 
+                    "number": "24", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 20, 
+                        "goals": 0, 
+                        "shots": 8
+                    }, 
+                    "dif": {
+                        "attempts": 2, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 22, 
+                        "goals": 1, 
+                        "shots": 14
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5238095238095238, 
+                        "goals": 1.0, 
+                        "shots": 0.6363636363636364
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 1087, 
                 "type": "shot"
             }, 
             {
@@ -1797,111 +1962,36 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 19, 
-                        "goals": 1, 
-                        "shots": 6
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 19, 
-                        "goals": 0, 
-                        "shots": 9
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.0, 
-                        "shots": 0.6
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 981, 
-                "type": "goal"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 20, 
-                        "goals": 2, 
-                        "shots": 7
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 19, 
-                        "goals": 0, 
-                        "shots": 9
-                    }, 
-                    "ratio": {
-                        "attempts": 0.48717948717948717, 
-                        "goals": 0.0, 
-                        "shots": 0.5625
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1091, 
-                "type": "goal"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
+                    "name": "BRANDON SUTTER", 
+                    "number": "21", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 21, 
-                        "goals": 2, 
-                        "shots": 8
+                        "goals": 0, 
+                        "shots": 9
                     }, 
                     "dif": {
-                        "attempts": -1, 
-                        "goals": -2
+                        "attempts": 2, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 20, 
-                        "goals": 0, 
-                        "shots": 10
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "ratio": {
-                        "attempts": 0.4878048780487805, 
-                        "goals": 0.0, 
-                        "shots": 0.5555555555555556
+                        "attempts": 0.5227272727272727, 
+                        "goals": 1.0, 
+                        "shots": 0.625
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 1199, 
+                "time": 1179, 
                 "type": "shot"
             }, 
             {
@@ -1909,891 +1999,73 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
+                    "name": "SVEN BAERTSCHI", 
+                    "number": "47", 
                     "pos": "L"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 22, 
-                        "goals": 2, 
+                        "goals": 0, 
                         "shots": 9
                     }, 
                     "dif": {
-                        "attempts": -1, 
-                        "goals": -2
+                        "attempts": 1, 
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 21, 
-                        "goals": 0, 
-                        "shots": 10
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "ratio": {
-                        "attempts": 0.4883720930232558, 
-                        "goals": 0.0, 
-                        "shots": 0.5263157894736842
+                        "attempts": 0.5111111111111111, 
+                        "goals": 1.0, 
+                        "shots": 0.625
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 1268, 
-                "type": "shot"
+                "time": 1221, 
+                "type": "miss"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
                         "attempts": 23, 
-                        "goals": 2, 
-                        "shots": 10
-                    }, 
-                    "dif": {
-                        "attempts": -2, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 21, 
                         "goals": 0, 
                         "shots": 10
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4772727272727273, 
-                        "goals": 0.0, 
-                        "shots": 0.5
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1290, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "ERIC GRYBA", 
-                    "number": "62", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 24, 
-                        "goals": 2, 
-                        "shots": 10
-                    }, 
-                    "dif": {
-                        "attempts": -3, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 21, 
-                        "goals": 0, 
-                        "shots": 10
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4666666666666667, 
-                        "goals": 0.0, 
-                        "shots": 0.5
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1296, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 25, 
-                        "goals": 2, 
-                        "shots": 11
-                    }, 
-                    "dif": {
-                        "attempts": -4, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 21, 
-                        "goals": 0, 
-                        "shots": 10
-                    }, 
-                    "ratio": {
-                        "attempts": 0.45652173913043476, 
-                        "goals": 0.0, 
-                        "shots": 0.47619047619047616
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1366, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 26, 
-                        "goals": 2, 
-                        "shots": 11
-                    }, 
-                    "dif": {
-                        "attempts": -5, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 21, 
-                        "goals": 0, 
-                        "shots": 10
-                    }, 
-                    "ratio": {
-                        "attempts": 0.44680851063829785, 
-                        "goals": 0.0, 
-                        "shots": 0.47619047619047616
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1367, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 27, 
-                        "goals": 2, 
-                        "shots": 12
-                    }, 
-                    "dif": {
-                        "attempts": -5, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 22, 
-                        "goals": 1, 
-                        "shots": 11
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4489795918367347, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.4782608695652174
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1421, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "NIKITA NIKITIN", 
-                    "number": "86", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 28, 
-                        "goals": 2, 
-                        "shots": 12
-                    }, 
-                    "dif": {
-                        "attempts": -6, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 22, 
-                        "goals": 1, 
-                        "shots": 11
-                    }, 
-                    "ratio": {
-                        "attempts": 0.44, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.4782608695652174
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1426, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "LAURI KORPIKOSKI", 
-                    "number": "28", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": -7, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 22, 
-                        "goals": 1, 
-                        "shots": 11
-                    }, 
-                    "ratio": {
-                        "attempts": 0.43137254901960786, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.4583333333333333
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1462, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 29, 
-                        "goals": 1, 
-                        "shots": 17
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4915254237288136, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5483870967741935
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1629, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 31, 
-                        "goals": 3, 
-                        "shots": 15
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 36, 
-                        "goals": 1, 
-                        "shots": 22
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5373134328358209, 
-                        "goals": 0.25, 
-                        "shots": 0.5945945945945946
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1821, 
-                "type": "goal"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 32, 
-                        "goals": 3, 
-                        "shots": 16
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 37, 
-                        "goals": 1, 
-                        "shots": 23
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5362318840579711, 
-                        "goals": 0.25, 
-                        "shots": 0.5897435897435898
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1859, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "ANDREJ SEKERA", 
-                    "number": "2", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 33, 
-                        "goals": 3, 
-                        "shots": 16
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 37, 
-                        "goals": 1, 
-                        "shots": 23
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5285714285714286, 
-                        "goals": 0.25, 
-                        "shots": 0.5897435897435898
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1874, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 34, 
-                        "goals": 3, 
-                        "shots": 16
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 37, 
-                        "goals": 1, 
-                        "shots": 23
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5211267605633803, 
-                        "goals": 0.25, 
-                        "shots": 0.5897435897435898
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1895, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 35, 
-                        "goals": 3, 
-                        "shots": 16
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 37, 
-                        "goals": 1, 
-                        "shots": 23
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5138888888888888, 
-                        "goals": 0.25, 
-                        "shots": 0.5897435897435898
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1915, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "MARK LETESTU", 
-                    "number": "55", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 36, 
-                        "goals": 3, 
-                        "shots": 17
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 40, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5263157894736842, 
-                        "goals": 0.4, 
-                        "shots": 0.5952380952380952
-                    }
-                }, 
-                "strength": "PP", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2002, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 37, 
-                        "goals": 3, 
-                        "shots": 17
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 40, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5194805194805194, 
-                        "goals": 0.4, 
-                        "shots": 0.5952380952380952
-                    }
-                }, 
-                "strength": "PP", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2007, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 38, 
-                        "goals": 3, 
-                        "shots": 18
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 40, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5128205128205128, 
-                        "goals": 0.4, 
-                        "shots": 0.5813953488372093
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2075, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "LUKE GAZDIC", 
-                    "number": "20", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 39, 
-                        "goals": 3, 
-                        "shots": 18
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 40, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5063291139240507, 
-                        "goals": 0.4, 
-                        "shots": 0.5813953488372093
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2108, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "IIRO PAKARINEN", 
-                    "number": "26", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 40, 
-                        "goals": 3, 
-                        "shots": 19
                     }, 
                     "dif": {
                         "attempts": 0, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 40, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.4, 
-                        "shots": 0.5681818181818182
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2122, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 41, 
-                        "goals": 3, 
-                        "shots": 19
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 46, 
-                        "goals": 3, 
-                        "shots": 29
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5287356321839081, 
-                        "goals": 0.5, 
-                        "shots": 0.6041666666666666
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2312, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "JORDAN EBERLE", 
-                    "number": "14", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 42, 
-                        "goals": 3, 
-                        "shots": 20
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 46, 
-                        "goals": 3, 
-                        "shots": 29
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5227272727272727, 
-                        "goals": 0.5, 
-                        "shots": 0.5918367346938775
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2327, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "JORDAN EBERLE", 
-                    "number": "14", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 43, 
-                        "goals": 3, 
-                        "shots": 20
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 46, 
-                        "goals": 3, 
-                        "shots": 29
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5168539325842697, 
-                        "goals": 0.5, 
-                        "shots": 0.5918367346938775
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2333, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 44, 
-                        "goals": 3, 
-                        "shots": 20
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
                         "goals": 1
                     }, 
                     "for": {
-                        "attempts": 48, 
-                        "goals": 4, 
-                        "shots": 30
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "ratio": {
-                        "attempts": 0.5217391304347826, 
-                        "goals": 0.5714285714285714, 
+                        "attempts": 0.5, 
+                        "goals": 1.0, 
                         "shots": 0.6
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 2482, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "LAURI KORPIKOSKI", 
-                    "number": "28", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 45, 
-                        "goals": 3, 
-                        "shots": 21
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 48, 
-                        "goals": 4, 
-                        "shots": 30
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5161290322580645, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5882352941176471
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2492, 
+                "time": 1242, 
                 "type": "shot"
             }, 
             {
@@ -2801,36 +2073,75 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "MARK LETESTU", 
-                    "number": "55", 
-                    "pos": "C"
+                    "cap": "A", 
+                    "name": "DANIEL SEDIN", 
+                    "number": "22", 
+                    "pos": "L"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 46, 
-                        "goals": 3, 
-                        "shots": 22
+                        "attempts": 24, 
+                        "goals": 0, 
+                        "shots": 10
                     }, 
                     "dif": {
-                        "attempts": 2, 
+                        "attempts": -1, 
                         "goals": 1
                     }, 
                     "for": {
-                        "attempts": 48, 
-                        "goals": 4, 
-                        "shots": 30
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "ratio": {
-                        "attempts": 0.5106382978723404, 
-                        "goals": 0.5714285714285714, 
+                        "attempts": 0.48936170212765956, 
+                        "goals": 1.0, 
+                        "shots": 0.6
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 1264, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DANIEL SEDIN", 
+                    "number": "22", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 25, 
+                        "goals": 0, 
+                        "shots": 11
+                    }, 
+                    "dif": {
+                        "attempts": -2, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "ratio": {
+                        "attempts": 0.4791666666666667, 
+                        "goals": 1.0, 
                         "shots": 0.5769230769230769
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 2499, 
+                "time": 1296, 
                 "type": "shot"
             }, 
             {
@@ -2838,36 +2149,36 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
+                    "name": "BO HORVAT", 
+                    "number": "53", 
                     "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 47, 
-                        "goals": 3, 
-                        "shots": 23
+                        "attempts": 26, 
+                        "goals": 0, 
+                        "shots": 12
                     }, 
                     "dif": {
-                        "attempts": 1, 
+                        "attempts": -3, 
                         "goals": 1
                     }, 
                     "for": {
-                        "attempts": 48, 
-                        "goals": 4, 
-                        "shots": 30
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "ratio": {
-                        "attempts": 0.5052631578947369, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5660377358490566
+                        "attempts": 0.46938775510204084, 
+                        "goals": 1.0, 
+                        "shots": 0.5555555555555556
                     }
                 }, 
-                "strength": "EV", 
+                "strength": "PP", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 2500, 
+                "time": 1320, 
                 "type": "shot"
             }, 
             {
@@ -2875,36 +2186,73 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "ERIC GRYBA", 
-                    "number": "62", 
-                    "pos": "D"
+                    "name": "BO HORVAT", 
+                    "number": "53", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 48, 
-                        "goals": 3, 
-                        "shots": 23
+                        "attempts": 27, 
+                        "goals": 1, 
+                        "shots": 13
                     }, 
                     "dif": {
-                        "attempts": 0, 
-                        "goals": 1
+                        "attempts": -4, 
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 48, 
-                        "goals": 4, 
-                        "shots": 30
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5660377358490566
+                        "attempts": 0.46, 
+                        "goals": 0.5, 
+                        "shots": 0.5357142857142857
+                    }
+                }, 
+                "strength": "PP", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 1323, 
+                "type": "goal"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "DEREK DORSETT", 
+                    "number": "15", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 28, 
+                        "goals": 1, 
+                        "shots": 13
+                    }, 
+                    "dif": {
+                        "attempts": -5, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "ratio": {
+                        "attempts": 0.45098039215686275, 
+                        "goals": 0.5, 
+                        "shots": 0.5357142857142857
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 2510, 
+                "time": 1360, 
                 "type": "miss"
             }, 
             {
@@ -2912,111 +2260,110 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "NIKITA NIKITIN", 
-                    "number": "86", 
-                    "pos": "D"
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 49, 
-                        "goals": 3, 
-                        "shots": 23
+                        "attempts": 29, 
+                        "goals": 1, 
+                        "shots": 14
                     }, 
                     "dif": {
-                        "attempts": -1, 
-                        "goals": 1
+                        "attempts": -3, 
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 48, 
-                        "goals": 4, 
-                        "shots": 30
+                        "attempts": 26, 
+                        "goals": 1, 
+                        "shots": 16
                     }, 
                     "ratio": {
-                        "attempts": 0.4948453608247423, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5660377358490566
+                        "attempts": 0.4727272727272727, 
+                        "goals": 0.5, 
+                        "shots": 0.5333333333333333
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 2513, 
-                "type": "block"
+                "time": 1518, 
+                "type": "shot"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "DARNELL NURSE", 
-                    "number": "25", 
-                    "pos": "D"
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 50, 
-                        "goals": 3, 
-                        "shots": 23
+                        "attempts": 30, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "dif": {
-                        "attempts": 1, 
-                        "goals": 1
+                        "attempts": -4, 
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 51, 
-                        "goals": 4, 
-                        "shots": 31
+                        "attempts": 26, 
+                        "goals": 1, 
+                        "shots": 16
                     }, 
                     "ratio": {
-                        "attempts": 0.504950495049505, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5740740740740741
+                        "attempts": 0.4642857142857143, 
+                        "goals": 0.5, 
+                        "shots": 0.5161290322580645
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 2607, 
-                "type": "block"
+                "time": 1563, 
+                "type": "shot"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
+                    "name": "JARED MCCANN", 
+                    "number": "91", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 51, 
-                        "goals": 3, 
-                        "shots": 23
+                        "attempts": 31, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "dif": {
-                        "attempts": 1, 
-                        "goals": 1
+                        "attempts": 0, 
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 52, 
-                        "goals": 4, 
-                        "shots": 31
+                        "attempts": 31, 
+                        "goals": 1, 
+                        "shots": 19
                     }, 
                     "ratio": {
-                        "attempts": 0.5048543689320388, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5740740740740741
+                        "attempts": 0.5, 
+                        "goals": 0.5, 
+                        "shots": 0.5588235294117647
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 2691, 
+                "time": 1658, 
                 "type": "miss"
             }, 
             {
@@ -3024,261 +2371,36 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "JUSTIN SCHULTZ", 
-                    "number": "19", 
-                    "pos": "D"
+                    "name": "DEREK DORSETT", 
+                    "number": "15", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 52, 
-                        "goals": 3, 
-                        "shots": 24
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 52, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5636363636363636
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2700, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 53, 
-                        "goals": 3, 
-                        "shots": 24
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 52, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.49523809523809526, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5636363636363636
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2785, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "MATT HENDRICKS", 
-                    "number": "23", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 54, 
-                        "goals": 3, 
-                        "shots": 25
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 54, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5535714285714286
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 2910, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 55, 
-                        "goals": 3, 
-                        "shots": 25
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 55, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5535714285714286
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 3006, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "JORDAN EBERLE", 
-                    "number": "14", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 56, 
-                        "goals": 3, 
-                        "shots": 26
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 55, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4954954954954955, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.543859649122807
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 3043, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 57, 
-                        "goals": 3, 
-                        "shots": 26
+                        "attempts": 32, 
+                        "goals": 1, 
+                        "shots": 16
                     }, 
                     "dif": {
                         "attempts": 2, 
-                        "goals": 1
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 59, 
-                        "goals": 4, 
-                        "shots": 33
+                        "attempts": 34, 
+                        "goals": 1, 
+                        "shots": 20
                     }, 
                     "ratio": {
-                        "attempts": 0.5086206896551724, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.559322033898305
+                        "attempts": 0.5151515151515151, 
+                        "goals": 0.5, 
+                        "shots": 0.5555555555555556
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 3253, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 58, 
-                        "goals": 3, 
-                        "shots": 27
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 59, 
-                        "goals": 4, 
-                        "shots": 33
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5042735042735043, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.55
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 3263, 
+                "time": 1745, 
                 "type": "shot"
             }, 
             {
@@ -3286,75 +2408,37 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "cap": "A", 
-                    "name": "RYAN NUGENT-HOPKINS", 
-                    "number": "93", 
+                    "cap": "c", 
+                    "name": "HENRIK SEDIN", 
+                    "number": "33", 
                     "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 59, 
-                        "goals": 3, 
-                        "shots": 27
+                        "attempts": 33, 
+                        "goals": 1, 
+                        "shots": 17
                     }, 
                     "dif": {
-                        "attempts": 0, 
-                        "goals": 1
+                        "attempts": 1, 
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 59, 
-                        "goals": 4, 
-                        "shots": 33
+                        "attempts": 34, 
+                        "goals": 1, 
+                        "shots": 20
                     }, 
                     "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.55
+                        "attempts": 0.5074626865671642, 
+                        "goals": 0.5, 
+                        "shots": 0.5405405405405406
                     }
                 }, 
-                "strength": "EV", 
+                "strength": "PP", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 3305, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 60, 
-                        "goals": 3, 
-                        "shots": 28
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 59, 
-                        "goals": 4, 
-                        "shots": 33
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4957983193277311, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5409836065573771
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 3348, 
+                "time": 1776, 
                 "type": "shot"
             }, 
             {
@@ -3362,36 +2446,36 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
                     "pos": "R"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 61, 
-                        "goals": 3, 
-                        "shots": 29
+                        "attempts": 34, 
+                        "goals": 1, 
+                        "shots": 18
                     }, 
                     "dif": {
-                        "attempts": -2, 
-                        "goals": 1
+                        "attempts": 0, 
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 59, 
-                        "goals": 4, 
-                        "shots": 33
+                        "attempts": 34, 
+                        "goals": 1, 
+                        "shots": 20
                     }, 
                     "ratio": {
-                        "attempts": 0.49166666666666664, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.532258064516129
+                        "attempts": 0.5, 
+                        "goals": 0.5, 
+                        "shots": 0.5263157894736842
                     }
                 }, 
-                "strength": "EV", 
+                "strength": "PP", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 3356, 
+                "time": 1809, 
                 "type": "shot"
             }, 
             {
@@ -3399,110 +2483,184 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "DARNELL NURSE", 
-                    "number": "25", 
-                    "pos": "D"
+                    "name": "BO HORVAT", 
+                    "number": "53", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 62, 
-                        "goals": 3, 
-                        "shots": 29
+                        "attempts": 35, 
+                        "goals": 1, 
+                        "shots": 19
+                    }, 
+                    "dif": {
+                        "attempts": 0, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 35, 
+                        "goals": 1, 
+                        "shots": 20
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5, 
+                        "goals": 0.5, 
+                        "shots": 0.5128205128205128
+                    }
+                }, 
+                "strength": "PP", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 1856, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "JARED MCCANN", 
+                    "number": "91", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 36, 
+                        "goals": 2, 
+                        "shots": 20
                     }, 
                     "dif": {
                         "attempts": -1, 
-                        "goals": 1
+                        "goals": -1
                     }, 
                     "for": {
-                        "attempts": 61, 
-                        "goals": 4, 
-                        "shots": 35
+                        "attempts": 35, 
+                        "goals": 1, 
+                        "shots": 20
                     }, 
                     "ratio": {
-                        "attempts": 0.4959349593495935, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.546875
+                        "attempts": 0.49295774647887325, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 1893, 
+                "type": "goal"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "RADIM VRBATA", 
+                    "number": "17", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 37, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 0, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 37, 
+                        "goals": 1, 
+                        "shots": 21
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5121951219512195
                     }
                 }, 
                 "strength": "SH", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 3404, 
-                "type": "miss"
+                "time": 2099, 
+                "type": "block"
             }, 
             {
                 "against": {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "MARK LETESTU", 
-                    "number": "55", 
-                    "pos": "C"
+                    "name": "BEN HUTTON", 
+                    "number": "27", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 63, 
-                        "goals": 3, 
-                        "shots": 30
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": 2
-                    }, 
-                    "for": {
-                        "attempts": 64, 
-                        "goals": 5, 
-                        "shots": 37
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5039370078740157, 
-                        "goals": 0.625, 
-                        "shots": 0.5522388059701493
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 3560, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 64, 
-                        "goals": 3, 
-                        "shots": 30
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
                     }, 
                     "dif": {
                         "attempts": 0, 
-                        "goals": 2
+                        "goals": -1
                     }, 
                     "for": {
-                        "attempts": 64, 
-                        "goals": 5, 
-                        "shots": 37
+                        "attempts": 38, 
+                        "goals": 1, 
+                        "shots": 22
                     }, 
                     "ratio": {
                         "attempts": 0.5, 
-                        "goals": 0.625, 
-                        "shots": 0.5522388059701493
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5238095238095238
+                    }
+                }, 
+                "strength": "SH", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 2179, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "ALEXANDRE BURROWS", 
+                    "number": "14", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 39, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 9, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 48, 
+                        "goals": 1, 
+                        "shots": 27
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5517241379310345, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.574468085106383
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 3574, 
+                "time": 2658, 
                 "type": "block"
             }, 
             {
@@ -3511,36 +2669,36 @@ return {
                 }, 
                 "shooter": {
                     "cap": "A", 
-                    "name": "TAYLOR HALL", 
-                    "number": "4", 
-                    "pos": "L"
+                    "name": "DAN HAMHUIS", 
+                    "number": "2", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 65, 
-                        "goals": 3, 
-                        "shots": 31
+                        "attempts": 40, 
+                        "goals": 2, 
+                        "shots": 21
                     }, 
                     "dif": {
-                        "attempts": -1, 
-                        "goals": 2
+                        "attempts": 8, 
+                        "goals": -1
                     }, 
                     "for": {
-                        "attempts": 64, 
-                        "goals": 5, 
-                        "shots": 37
+                        "attempts": 48, 
+                        "goals": 1, 
+                        "shots": 27
                     }, 
                     "ratio": {
-                        "attempts": 0.49612403100775193, 
-                        "goals": 0.625, 
-                        "shots": 0.5441176470588235
+                        "attempts": 0.5454545454545454, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5625
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 3594, 
+                "time": 2660, 
                 "type": "shot"
             }, 
             {
@@ -3548,37 +2706,447 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "DARNELL NURSE", 
-                    "number": "25", 
-                    "pos": "D"
+                    "name": "ADAM CRACKNELL", 
+                    "number": "24", 
+                    "pos": "R"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 66, 
-                        "goals": 3, 
-                        "shots": 31
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
                     }, 
                     "dif": {
-                        "attempts": -2, 
-                        "goals": 2
+                        "attempts": 7, 
+                        "goals": -1
                     }, 
                     "for": {
-                        "attempts": 64, 
-                        "goals": 5, 
-                        "shots": 37
+                        "attempts": 48, 
+                        "goals": 1, 
+                        "shots": 27
                     }, 
                     "ratio": {
-                        "attempts": 0.49230769230769234, 
-                        "goals": 0.625, 
-                        "shots": 0.5441176470588235
+                        "attempts": 0.5393258426966292, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5510204081632653
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 3598, 
+                "time": 2667, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "YANNICK WEBER", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 42, 
+                        "goals": 2, 
+                        "shots": 23
+                    }, 
+                    "dif": {
+                        "attempts": 17, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 59, 
+                        "goals": 2, 
+                        "shots": 33
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5841584158415841, 
+                        "goals": 0.5, 
+                        "shots": 0.5892857142857143
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3046, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "ALEXANDRE BURROWS", 
+                    "number": "14", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 43, 
+                        "goals": 2, 
+                        "shots": 24
+                    }, 
+                    "dif": {
+                        "attempts": 18, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 61, 
+                        "goals": 2, 
+                        "shots": 35
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5865384615384616, 
+                        "goals": 0.5, 
+                        "shots": 0.5932203389830508
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3232, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "BRANDON SUTTER", 
+                    "number": "21", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 44, 
+                        "goals": 2, 
+                        "shots": 25
+                    }, 
+                    "dif": {
+                        "attempts": 17, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 61, 
+                        "goals": 2, 
+                        "shots": 35
+                    }, 
+                    "ratio": {
+                        "attempts": 0.580952380952381, 
+                        "goals": 0.5, 
+                        "shots": 0.5833333333333334
+                    }
+                }, 
+                "strength": "PP", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3268, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DANIEL SEDIN", 
+                    "number": "22", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 45, 
+                        "goals": 2, 
+                        "shots": 26
+                    }, 
+                    "dif": {
+                        "attempts": 20, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5909090909090909, 
+                        "goals": 0.5, 
+                        "shots": 0.5873015873015873
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3514, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "CHRISTOPHER TANEV", 
+                    "number": "8", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 46, 
+                        "goals": 2, 
+                        "shots": 26
+                    }, 
+                    "dif": {
+                        "attempts": 19, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5855855855855856, 
+                        "goals": 0.5, 
+                        "shots": 0.5873015873015873
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3520, 
                 "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "JANNIK HANSEN", 
+                    "number": "36", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 47, 
+                        "goals": 2, 
+                        "shots": 27
+                    }, 
+                    "dif": {
+                        "attempts": 18, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5803571428571429, 
+                        "goals": 0.5, 
+                        "shots": 0.578125
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3533, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "LUCA SBISA", 
+                    "number": "5", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 48, 
+                        "goals": 2, 
+                        "shots": 28
+                    }, 
+                    "dif": {
+                        "attempts": 17, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5752212389380531, 
+                        "goals": 0.5, 
+                        "shots": 0.5692307692307692
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3597, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DANIEL SEDIN", 
+                    "number": "22", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 49, 
+                        "goals": 2, 
+                        "shots": 28
+                    }, 
+                    "dif": {
+                        "attempts": 16, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5701754385964912, 
+                        "goals": 0.5, 
+                        "shots": 0.5692307692307692
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3615, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DANIEL SEDIN", 
+                    "number": "22", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 50, 
+                        "goals": 2, 
+                        "shots": 29
+                    }, 
+                    "dif": {
+                        "attempts": 15, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5652173913043478, 
+                        "goals": 0.5, 
+                        "shots": 0.5606060606060606
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3645, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "BEN HUTTON", 
+                    "number": "27", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 51, 
+                        "goals": 2, 
+                        "shots": 29
+                    }, 
+                    "dif": {
+                        "attempts": 14, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5603448275862069, 
+                        "goals": 0.5, 
+                        "shots": 0.5606060606060606
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3692, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "CGY"
+                }, 
+                "shooter": {
+                    "name": "BEN HUTTON", 
+                    "number": "27", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 52, 
+                        "goals": 2, 
+                        "shots": 30
+                    }, 
+                    "dif": {
+                        "attempts": 13, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5555555555555556, 
+                        "goals": 0.5, 
+                        "shots": 0.5522388059701493
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "VAN"
+                }, 
+                "time": 3697, 
+                "type": "shot"
             }
         ], 
         "goals": [
@@ -3587,31 +3155,31 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
+                    "name": "BO HORVAT", 
+                    "number": "53", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 19, 
+                        "attempts": 27, 
                         "goals": 1
                     }, 
                     "dif": {
-                        "attempts": 0, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 19, 
+                        "attempts": -4, 
                         "goals": 0
                     }, 
+                    "for": {
+                        "attempts": 23, 
+                        "goals": 1
+                    }, 
                     "ratio": {
-                        "attempts": 0.5
+                        "attempts": 0.46
                     }
                 }, 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 981, 
+                "time": 1323, 
                 "type": "goal"
             }, 
             {
@@ -3619,93 +3187,61 @@ return {
                     "abv": "CGY"
                 }, 
                 "shooter": {
-                    "name": "BENOIT POULIOT", 
-                    "number": "67", 
-                    "pos": "L"
+                    "name": "JARED MCCANN", 
+                    "number": "91", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 20, 
+                        "attempts": 36, 
                         "goals": 2
                     }, 
                     "dif": {
                         "attempts": -1, 
-                        "goals": -2
+                        "goals": -1
                     }, 
                     "for": {
-                        "attempts": 19, 
-                        "goals": 0
-                    }, 
-                    "ratio": {
-                        "attempts": 0.48717948717948717
-                    }
-                }, 
-                "team": {
-                    "abv": "EDM"
-                }, 
-                "time": 1091, 
-                "type": "goal"
-            }, 
-            {
-                "against": {
-                    "abv": "CGY"
-                }, 
-                "shooter": {
-                    "name": "TEDDY PURCELL", 
-                    "number": "16", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 31, 
-                        "goals": 3
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 36, 
+                        "attempts": 35, 
                         "goals": 1
                     }, 
                     "ratio": {
-                        "attempts": 0.5373134328358209
+                        "attempts": 0.49295774647887325
                     }
                 }, 
                 "team": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
-                "time": 1821, 
+                "time": 1893, 
                 "type": "goal"
             }
         ], 
         "stats": {
             "goals": {
-                "1": 2, 
-                "2": 1, 
+                "1": 0, 
+                "2": 2, 
                 "3": 0, 
                 "4": 0, 
                 "5": 0, 
-                "reg": 3, 
-                "total": 3
+                "reg": 2, 
+                "total": 2
             }
         }, 
         "team": {
-            "abv": "EDM"
+            "abv": "VAN"
         }
     }, 
-    "date": "2015-12-27", 
+    "date": "2015-10-10", 
     "for": {
         "attempts": [
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "cap": "A", 
-                    "name": "SEAN MONAHAN", 
-                    "number": "23", 
-                    "pos": "C"
+                    "name": "KRIS RUSSELL", 
+                    "number": "4", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
@@ -3732,26 +3268,26 @@ return {
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 78, 
-                "type": "miss"
+                "time": 16, 
+                "type": "block"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
-                    "name": "MASON RAYMOND", 
-                    "number": "21", 
-                    "pos": "L"
+                    "name": "DERYK ENGELLAND", 
+                    "number": "29", 
+                    "pos": "D"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 0, 
+                        "attempts": 4, 
                         "goals": 0, 
-                        "shots": 0
+                        "shots": 3
                     }, 
                     "dif": {
-                        "attempts": 2, 
+                        "attempts": -2, 
                         "goals": 0
                     }, 
                     "for": {
@@ -3760,35 +3296,35 @@ return {
                         "shots": 1
                     }, 
                     "ratio": {
-                        "attempts": 1.0, 
+                        "attempts": 0.3333333333333333, 
                         "goals": 0, 
-                        "shots": 1.0
+                        "shots": 0.25
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 82, 
+                "time": 130, 
                 "type": "shot"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
-                    "name": "MASON RAYMOND", 
-                    "number": "21", 
-                    "pos": "L"
+                    "name": "MIKAEL BACKLUND", 
+                    "number": "11", 
+                    "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 0, 
+                        "attempts": 5, 
                         "goals": 0, 
-                        "shots": 0
+                        "shots": 4
                     }, 
                     "dif": {
-                        "attempts": 3, 
+                        "attempts": -2, 
                         "goals": 0
                     }, 
                     "for": {
@@ -3797,21 +3333,207 @@ return {
                         "shots": 2
                     }, 
                     "ratio": {
-                        "attempts": 1.0, 
+                        "attempts": 0.375, 
                         "goals": 0, 
-                        "shots": 1.0
+                        "shots": 0.3333333333333333
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 109, 
+                "time": 179, 
                 "type": "shot"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "c", 
+                    "name": "MARK GIORDANO", 
+                    "number": "5", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 5, 
+                        "goals": 0, 
+                        "shots": 4
+                    }, 
+                    "dif": {
+                        "attempts": -1, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 4, 
+                        "goals": 0, 
+                        "shots": 2
+                    }, 
+                    "ratio": {
+                        "attempts": 0.4444444444444444, 
+                        "goals": 0, 
+                        "shots": 0.3333333333333333
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 184, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SEAN MONAHAN", 
+                    "number": "23", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 5, 
+                        "goals": 0, 
+                        "shots": 4
+                    }, 
+                    "dif": {
+                        "attempts": 0, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 5, 
+                        "goals": 0, 
+                        "shots": 2
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5, 
+                        "goals": 0, 
+                        "shots": 0.3333333333333333
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 229, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SEAN MONAHAN", 
+                    "number": "23", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 5, 
+                        "goals": 0, 
+                        "shots": 4
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 6, 
+                        "goals": 0, 
+                        "shots": 3
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5454545454545454, 
+                        "goals": 0, 
+                        "shots": 0.42857142857142855
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 245, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MICHAEL FROLIK", 
+                    "number": "67", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 5, 
+                        "goals": 0, 
+                        "shots": 4
+                    }, 
+                    "dif": {
+                        "attempts": 2, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 7, 
+                        "goals": 0, 
+                        "shots": 4
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5833333333333334, 
+                        "goals": 0, 
+                        "shots": 0.5
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 251, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MASON RAYMOND", 
+                    "number": "21", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 5, 
+                        "goals": 0, 
+                        "shots": 4
+                    }, 
+                    "dif": {
+                        "attempts": 3, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 8, 
+                        "goals": 0, 
+                        "shots": 5
+                    }, 
+                    "ratio": {
+                        "attempts": 0.6153846153846154, 
+                        "goals": 0, 
+                        "shots": 0.5555555555555556
+                    }
+                }, 
+                "strength": "PP", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 277, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "name": "DOUGIE HAMILTON", 
@@ -3820,1374 +3542,72 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 0, 
-                        "goals": 0, 
-                        "shots": 0
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 4, 
-                        "goals": 0, 
-                        "shots": 2
-                    }, 
-                    "ratio": {
-                        "attempts": 1.0, 
-                        "goals": 0, 
-                        "shots": 1.0
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 115, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "KRIS RUSSELL", 
-                    "number": "4", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 0, 
-                        "goals": 0, 
-                        "shots": 0
-                    }, 
-                    "dif": {
                         "attempts": 5, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 5, 
-                        "goals": 0, 
-                        "shots": 3
-                    }, 
-                    "ratio": {
-                        "attempts": 1.0, 
-                        "goals": 0, 
-                        "shots": 1.0
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 124, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DERYK ENGELLAND", 
-                    "number": "29", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 0, 
-                        "goals": 0, 
-                        "shots": 0
-                    }, 
-                    "dif": {
-                        "attempts": 6, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 6, 
-                        "goals": 0, 
-                        "shots": 3
-                    }, 
-                    "ratio": {
-                        "attempts": 1.0, 
-                        "goals": 0, 
-                        "shots": 1.0
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 132, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 0, 
-                        "goals": 0, 
-                        "shots": 0
-                    }, 
-                    "dif": {
-                        "attempts": 7, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 7, 
                         "goals": 0, 
                         "shots": 4
                     }, 
-                    "ratio": {
-                        "attempts": 1.0, 
-                        "goals": 0, 
-                        "shots": 1.0
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 197, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JIRI HUDLER", 
-                    "number": "24", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 0, 
-                        "goals": 0, 
-                        "shots": 0
-                    }, 
                     "dif": {
-                        "attempts": 8, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 8, 
-                        "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "ratio": {
-                        "attempts": 1.0, 
-                        "goals": 0, 
-                        "shots": 1.0
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 204, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "KRIS RUSSELL", 
-                    "number": "4", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 3, 
-                        "goals": 0, 
-                        "shots": 1
-                    }, 
-                    "dif": {
-                        "attempts": 6, 
-                        "goals": 0
+                        "attempts": 4, 
+                        "goals": 1
                     }, 
                     "for": {
                         "attempts": 9, 
-                        "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "ratio": {
-                        "attempts": 0.75, 
-                        "goals": 0, 
-                        "shots": 0.8333333333333334
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 328, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "LANCE BOUMA", 
-                    "number": "17", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 3, 
-                        "goals": 0, 
-                        "shots": 1
-                    }, 
-                    "dif": {
-                        "attempts": 7, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 10, 
-                        "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "ratio": {
-                        "attempts": 0.7692307692307693, 
-                        "goals": 0, 
-                        "shots": 0.8333333333333334
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 344, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 5, 
-                        "goals": 0, 
-                        "shots": 1
-                    }, 
-                    "dif": {
-                        "attempts": 6, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 11, 
-                        "goals": 0, 
-                        "shots": 6
-                    }, 
-                    "ratio": {
-                        "attempts": 0.6875, 
-                        "goals": 0, 
-                        "shots": 0.8571428571428571
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 417, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "KRIS RUSSELL", 
-                    "number": "4", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 5, 
-                        "goals": 0, 
-                        "shots": 1
-                    }, 
-                    "dif": {
-                        "attempts": 7, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 12, 
-                        "goals": 0, 
-                        "shots": 6
-                    }, 
-                    "ratio": {
-                        "attempts": 0.7058823529411765, 
-                        "goals": 0, 
-                        "shots": 0.8571428571428571
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 466, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MARKUS GRANLUND", 
-                    "number": "60", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 5, 
-                        "goals": 0, 
-                        "shots": 1
-                    }, 
-                    "dif": {
-                        "attempts": 8, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 13, 
-                        "goals": 0, 
-                        "shots": 6
-                    }, 
-                    "ratio": {
-                        "attempts": 0.7222222222222222, 
-                        "goals": 0, 
-                        "shots": 0.8571428571428571
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 484, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "SAM BENNETT", 
-                    "number": "93", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 5, 
-                        "goals": 0, 
-                        "shots": 1
-                    }, 
-                    "dif": {
-                        "attempts": 9, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 14, 
-                        "goals": 0, 
-                        "shots": 6
-                    }, 
-                    "ratio": {
-                        "attempts": 0.7368421052631579, 
-                        "goals": 0, 
-                        "shots": 0.8571428571428571
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 496, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DENNIS WIDEMAN", 
-                    "number": "6", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 8, 
-                        "goals": 0, 
-                        "shots": 2
-                    }, 
-                    "dif": {
-                        "attempts": 7, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 15, 
-                        "goals": 0, 
-                        "shots": 7
-                    }, 
-                    "ratio": {
-                        "attempts": 0.6521739130434783, 
-                        "goals": 0, 
-                        "shots": 0.7777777777777778
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 570, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MIKAEL BACKLUND", 
-                    "number": "11", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 18, 
-                        "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "dif": {
-                        "attempts": -2, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 16, 
-                        "goals": 0, 
-                        "shots": 7
-                    }, 
-                    "ratio": {
-                        "attempts": 0.47058823529411764, 
-                        "goals": 0, 
-                        "shots": 0.5833333333333334
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 828, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "TJ BRODIE", 
-                    "number": "7", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 18, 
-                        "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 17, 
-                        "goals": 0, 
-                        "shots": 8
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4857142857142857, 
-                        "goals": 0, 
-                        "shots": 0.6153846153846154
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 850, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "SAM BENNETT", 
-                    "number": "93", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 18, 
-                        "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 18, 
-                        "goals": 0, 
-                        "shots": 9
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0, 
-                        "shots": 0.6428571428571429
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 867, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DERYK ENGELLAND", 
-                    "number": "29", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 18, 
-                        "goals": 0, 
-                        "shots": 5
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 19, 
-                        "goals": 0, 
-                        "shots": 9
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5135135135135135, 
-                        "goals": 0, 
-                        "shots": 0.6428571428571429
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 873, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MICHEAL FERLAND", 
-                    "number": "79", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 20, 
-                        "goals": 2, 
-                        "shots": 7
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 20, 
-                        "goals": 0, 
-                        "shots": 10
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.0, 
-                        "shots": 0.5882352941176471
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1182, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JIRI HUDLER", 
-                    "number": "24", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 21, 
-                        "goals": 2, 
-                        "shots": 8
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 21, 
-                        "goals": 0, 
-                        "shots": 10
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.0, 
-                        "shots": 0.5555555555555556
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1259, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 26, 
-                        "goals": 2, 
-                        "shots": 11
-                    }, 
-                    "dif": {
-                        "attempts": -4, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 22, 
                         "goals": 1, 
-                        "shots": 11
+                        "shots": 6
                     }, 
                     "ratio": {
-                        "attempts": 0.4583333333333333, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5
+                        "attempts": 0.6428571428571429, 
+                        "goals": 1.0, 
+                        "shots": 0.6
                     }
                 }, 
-                "strength": "EV", 
+                "strength": "PP", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 1390, 
+                "time": 300, 
                 "type": "goal"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
-                    "cap": "A", 
-                    "name": "KRIS RUSSELL", 
-                    "number": "4", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": -6, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 23, 
-                        "goals": 1, 
-                        "shots": 12
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4423076923076923, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.48
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1479, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "SAM BENNETT", 
-                    "number": "93", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": -5, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 24, 
-                        "goals": 1, 
-                        "shots": 12
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4528301886792453, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.48
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1497, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MARKUS GRANLUND", 
-                    "number": "60", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": -4, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 25, 
-                        "goals": 1, 
-                        "shots": 13
-                    }, 
-                    "ratio": {
-                        "attempts": 0.46296296296296297, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1510, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JIRI HUDLER", 
-                    "number": "24", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": -3, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 26, 
-                        "goals": 1, 
-                        "shots": 14
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4727272727272727, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5185185185185185
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1541, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "TJ BRODIE", 
-                    "number": "7", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": -2, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 27, 
-                        "goals": 1, 
-                        "shots": 15
-                    }, 
-                    "ratio": {
-                        "attempts": 0.48214285714285715, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5357142857142857
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1548, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MIKAEL BACKLUND", 
-                    "number": "11", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 28, 
-                        "goals": 1, 
-                        "shots": 16
-                    }, 
-                    "ratio": {
-                        "attempts": 0.49122807017543857, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5517241379310345
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1570, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
+                    "name": "BRANDON BOLLIG", 
+                    "number": "52", 
                     "pos": "L"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 29, 
-                        "goals": 2, 
-                        "shots": 13
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 29, 
-                        "goals": 1, 
-                        "shots": 17
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5666666666666667
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1604, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "SEAN MONAHAN", 
-                    "number": "23", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 30, 
-                        "goals": 1, 
-                        "shots": 18
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5625
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1638, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "c", 
-                    "name": "MARK GIORDANO", 
-                    "number": "5", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 31, 
-                        "goals": 1, 
-                        "shots": 18
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5081967213114754, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5625
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1646, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "c", 
-                    "name": "MARK GIORDANO", 
-                    "number": "5", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
+                        "attempts": 8, 
+                        "goals": 0, 
+                        "shots": 4
                     }, 
                     "dif": {
                         "attempts": 2, 
-                        "goals": -1
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 32, 
+                        "attempts": 10, 
                         "goals": 1, 
-                        "shots": 19
+                        "shots": 7
                     }, 
                     "ratio": {
-                        "attempts": 0.5161290322580645, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5757575757575758
+                        "attempts": 0.5555555555555556, 
+                        "goals": 1.0, 
+                        "shots": 0.6363636363636364
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 1653, 
+                "time": 387, 
                 "type": "shot"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MATT STAJAN", 
-                    "number": "18", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 33, 
-                        "goals": 1, 
-                        "shots": 20
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5238095238095238, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.5882352941176471
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1674, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "SAM BENNETT", 
-                    "number": "93", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 34, 
-                        "goals": 1, 
-                        "shots": 21
-                    }, 
-                    "ratio": {
-                        "attempts": 0.53125, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.6
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1688, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "SAM BENNETT", 
-                    "number": "93", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 35, 
-                        "goals": 1, 
-                        "shots": 21
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5384615384615384, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.6
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1689, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DENNIS WIDEMAN", 
-                    "number": "6", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 30, 
-                        "goals": 2, 
-                        "shots": 14
-                    }, 
-                    "dif": {
-                        "attempts": 6, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 36, 
-                        "goals": 1, 
-                        "shots": 22
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5454545454545454, 
-                        "goals": 0.3333333333333333, 
-                        "shots": 0.6111111111111112
-                    }
-                }, 
-                "strength": "PP", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1729, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DAVID JONES", 
-                    "number": "19", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 31, 
-                        "goals": 3, 
-                        "shots": 15
-                    }, 
-                    "dif": {
-                        "attempts": 6, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 37, 
-                        "goals": 1, 
-                        "shots": 23
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5441176470588235, 
-                        "goals": 0.25, 
-                        "shots": 0.6052631578947368
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1849, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MARKUS GRANLUND", 
-                    "number": "60", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 35, 
-                        "goals": 3, 
-                        "shots": 16
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 38, 
-                        "goals": 1, 
-                        "shots": 24
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5205479452054794, 
-                        "goals": 0.25, 
-                        "shots": 0.6
-                    }
-                }, 
-                "strength": "SH", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1968, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MATT STAJAN", 
-                    "number": "18", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 35, 
-                        "goals": 3, 
-                        "shots": 16
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": -2
-                    }, 
-                    "for": {
-                        "attempts": 39, 
-                        "goals": 1, 
-                        "shots": 24
-                    }, 
-                    "ratio": {
-                        "attempts": 0.527027027027027, 
-                        "goals": 0.25, 
-                        "shots": 0.6
-                    }
-                }, 
-                "strength": "PP", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1971, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MATT STAJAN", 
-                    "number": "18", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 35, 
-                        "goals": 3, 
-                        "shots": 16
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 40, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5333333333333333, 
-                        "goals": 0.4, 
-                        "shots": 0.6097560975609756
-                    }
-                }, 
-                "strength": "SH", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1972, 
-                "type": "goal"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "name": "MASON RAYMOND", 
@@ -5196,148 +3616,110 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 40, 
-                        "goals": 3, 
-                        "shots": 19
+                        "attempts": 10, 
+                        "goals": 0, 
+                        "shots": 5
                     }, 
                     "dif": {
                         "attempts": 1, 
-                        "goals": -1
+                        "goals": 1
                     }, 
                     "for": {
-                        "attempts": 41, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5061728395061729, 
-                        "goals": 0.4, 
-                        "shots": 0.5681818181818182
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2141, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DENNIS WIDEMAN", 
-                    "number": "6", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 40, 
-                        "goals": 3, 
-                        "shots": 19
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 42, 
-                        "goals": 2, 
-                        "shots": 25
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5121951219512195, 
-                        "goals": 0.4, 
-                        "shots": 0.5681818181818182
-                    }
-                }, 
-                "strength": "SH", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2157, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "SEAN MONAHAN", 
-                    "number": "23", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 40, 
-                        "goals": 3, 
-                        "shots": 19
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 43, 
-                        "goals": 2, 
-                        "shots": 26
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5180722891566265, 
-                        "goals": 0.4, 
-                        "shots": 0.5777777777777777
-                    }
-                }, 
-                "strength": "PP", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2165, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "c", 
-                    "name": "MARK GIORDANO", 
-                    "number": "5", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 40, 
-                        "goals": 3, 
-                        "shots": 19
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 44, 
-                        "goals": 3, 
-                        "shots": 27
+                        "attempts": 11, 
+                        "goals": 1, 
+                        "shots": 8
                     }, 
                     "ratio": {
                         "attempts": 0.5238095238095238, 
-                        "goals": 0.5, 
-                        "shots": 0.5869565217391305
+                        "goals": 1.0, 
+                        "shots": 0.6153846153846154
                     }
                 }, 
-                "strength": "PP", 
+                "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 2207, 
-                "type": "goal"
+                "time": 495, 
+                "type": "shot"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "c", 
+                    "name": "MARK GIORDANO", 
+                    "number": "5", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 10, 
+                        "goals": 0, 
+                        "shots": 5
+                    }, 
+                    "dif": {
+                        "attempts": 2, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 12, 
+                        "goals": 1, 
+                        "shots": 9
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5454545454545454, 
+                        "goals": 1.0, 
+                        "shots": 0.6428571428571429
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 622, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MASON RAYMOND", 
+                    "number": "21", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 13, 
+                        "goals": 0, 
+                        "shots": 6
+                    }, 
+                    "dif": {
+                        "attempts": 0, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 13, 
+                        "goals": 1, 
+                        "shots": 10
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5, 
+                        "goals": 1.0, 
+                        "shots": 0.625
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 684, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "name": "SAM BENNETT", 
@@ -5346,109 +3728,35 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 40, 
-                        "goals": 3, 
-                        "shots": 19
+                        "attempts": 13, 
+                        "goals": 0, 
+                        "shots": 6
                     }, 
                     "dif": {
-                        "attempts": 5, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 45, 
-                        "goals": 3, 
-                        "shots": 28
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5294117647058824, 
-                        "goals": 0.5, 
-                        "shots": 0.5957446808510638
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2300, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "SAM BENNETT", 
-                    "number": "93", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 40, 
-                        "goals": 3, 
-                        "shots": 19
-                    }, 
-                    "dif": {
-                        "attempts": 6, 
-                        "goals": 0
-                    }, 
-                    "for": {
-                        "attempts": 46, 
-                        "goals": 3, 
-                        "shots": 29
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5348837209302325, 
-                        "goals": 0.5, 
-                        "shots": 0.6041666666666666
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2302, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 43, 
-                        "goals": 3, 
-                        "shots": 20
-                    }, 
-                    "dif": {
-                        "attempts": 4, 
+                        "attempts": 1, 
                         "goals": 1
                     }, 
                     "for": {
-                        "attempts": 47, 
-                        "goals": 4, 
-                        "shots": 30
+                        "attempts": 14, 
+                        "goals": 1, 
+                        "shots": 11
                     }, 
                     "ratio": {
-                        "attempts": 0.5222222222222223, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.6
+                        "attempts": 0.5185185185185185, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 2368, 
-                "type": "goal"
+                "time": 733, 
+                "type": "shot"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "cap": "c", 
@@ -5458,482 +3766,35 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 43, 
-                        "goals": 3, 
-                        "shots": 20
-                    }, 
-                    "dif": {
-                        "attempts": 5, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 48, 
-                        "goals": 4, 
-                        "shots": 30
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5274725274725275, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.6
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2395, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "c", 
-                    "name": "MARK GIORDANO", 
-                    "number": "5", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 49, 
-                        "goals": 3, 
-                        "shots": 23
+                        "attempts": 15, 
+                        "goals": 0, 
+                        "shots": 6
                     }, 
                     "dif": {
                         "attempts": 0, 
                         "goals": 1
                     }, 
                     "for": {
-                        "attempts": 49, 
-                        "goals": 4, 
-                        "shots": 30
+                        "attempts": 15, 
+                        "goals": 1, 
+                        "shots": 11
                     }, 
                     "ratio": {
                         "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5660377358490566
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 2531, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "LANCE BOUMA", 
-                    "number": "17", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 49, 
-                        "goals": 3, 
-                        "shots": 23
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 50, 
-                        "goals": 4, 
-                        "shots": 30
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5050505050505051, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5660377358490566
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2560, 
+                "time": 835, 
                 "type": "block"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 49, 
-                        "goals": 3, 
-                        "shots": 23
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 51, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.51, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5740740740740741
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2599, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 50, 
-                        "goals": 3, 
-                        "shots": 23
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 52, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5098039215686274, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5740740740740741
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2620, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "c", 
-                    "name": "MARK GIORDANO", 
-                    "number": "5", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 53, 
-                        "goals": 3, 
-                        "shots": 24
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 53, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5636363636363636
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2831, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DENNIS WIDEMAN", 
-                    "number": "6", 
-                    "pos": "D"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 53, 
-                        "goals": 3, 
-                        "shots": 24
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 54, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5046728971962616, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5636363636363636
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2867, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "LANCE BOUMA", 
-                    "number": "17", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 54, 
-                        "goals": 3, 
-                        "shots": 25
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 55, 
-                        "goals": 4, 
-                        "shots": 31
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5045871559633027, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5535714285714286
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 2948, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MIKAEL BACKLUND", 
-                    "number": "11", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 56, 
-                        "goals": 3, 
-                        "shots": 26
-                    }, 
-                    "dif": {
-                        "attempts": 0, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 56, 
-                        "goals": 4, 
-                        "shots": 32
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5517241379310345
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 3056, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "DAVID JONES", 
-                    "number": "19", 
-                    "pos": "R"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 56, 
-                        "goals": 3, 
-                        "shots": 26
-                    }, 
-                    "dif": {
-                        "attempts": 1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 57, 
-                        "goals": 4, 
-                        "shots": 32
-                    }, 
-                    "ratio": {
-                        "attempts": 0.504424778761062, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5517241379310345
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 3157, 
-                "type": "miss"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 56, 
-                        "goals": 3, 
-                        "shots": 26
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 58, 
-                        "goals": 4, 
-                        "shots": 32
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5087719298245614, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5517241379310345
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 3198, 
-                "type": "block"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MIKAEL BACKLUND", 
-                    "number": "11", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 56, 
-                        "goals": 3, 
-                        "shots": 26
-                    }, 
-                    "dif": {
-                        "attempts": 3, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 59, 
-                        "goals": 4, 
-                        "shots": 33
-                    }, 
-                    "ratio": {
-                        "attempts": 0.5130434782608696, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.559322033898305
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 3234, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "cap": "A", 
-                    "name": "SEAN MONAHAN", 
-                    "number": "23", 
-                    "pos": "C"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 61, 
-                        "goals": 3, 
-                        "shots": 29
-                    }, 
-                    "dif": {
-                        "attempts": -1, 
-                        "goals": 1
-                    }, 
-                    "for": {
-                        "attempts": 60, 
-                        "goals": 4, 
-                        "shots": 34
-                    }, 
-                    "ratio": {
-                        "attempts": 0.49586776859504134, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.5396825396825397
-                    }
-                }, 
-                "strength": "EV", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 3367, 
-                "type": "shot"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "name": "JIRI HUDLER", 
@@ -5942,72 +3803,591 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 61, 
-                        "goals": 3, 
-                        "shots": 29
+                        "attempts": 15, 
+                        "goals": 0, 
+                        "shots": 6
                     }, 
                     "dif": {
-                        "attempts": 0, 
+                        "attempts": 1, 
                         "goals": 1
                     }, 
                     "for": {
-                        "attempts": 61, 
-                        "goals": 4, 
-                        "shots": 35
+                        "attempts": 16, 
+                        "goals": 1, 
+                        "shots": 11
                     }, 
                     "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.546875
+                        "attempts": 0.5161290322580645, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 3371, 
-                "type": "shot"
+                "time": 842, 
+                "type": "block"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
                 }, 
                 "shooter": {
-                    "name": "MIKAEL BACKLUND", 
-                    "number": "11", 
+                    "name": "MICHAEL FROLIK", 
+                    "number": "67", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 16, 
+                        "goals": 0, 
+                        "shots": 6
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 17, 
+                        "goals": 1, 
+                        "shots": 11
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5151515151515151, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 943, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SAM BENNETT", 
+                    "number": "93", 
                     "pos": "C"
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 62, 
-                        "goals": 3, 
-                        "shots": 29
+                        "attempts": 16, 
+                        "goals": 0, 
+                        "shots": 6
                     }, 
                     "dif": {
-                        "attempts": 0, 
+                        "attempts": 2, 
                         "goals": 1
                     }, 
                     "for": {
-                        "attempts": 62, 
-                        "goals": 4, 
-                        "shots": 35
+                        "attempts": 18, 
+                        "goals": 1, 
+                        "shots": 11
                     }, 
                     "ratio": {
-                        "attempts": 0.5, 
-                        "goals": 0.5714285714285714, 
-                        "shots": 0.546875
+                        "attempts": 0.5294117647058824, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
                     }
                 }, 
-                "strength": "PP", 
+                "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 3450, 
+                "time": 950, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DERYK ENGELLAND", 
+                    "number": "29", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 16, 
+                        "goals": 0, 
+                        "shots": 6
+                    }, 
+                    "dif": {
+                        "attempts": 3, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 19, 
+                        "goals": 1, 
+                        "shots": 11
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5428571428571428, 
+                        "goals": 1.0, 
+                        "shots": 0.6470588235294118
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 951, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MASON RAYMOND", 
+                    "number": "21", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 16, 
+                        "goals": 0, 
+                        "shots": 6
+                    }, 
+                    "dif": {
+                        "attempts": 4, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 20, 
+                        "goals": 1, 
+                        "shots": 12
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5555555555555556, 
+                        "goals": 1.0, 
+                        "shots": 0.6666666666666666
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 952, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MICHAEL FROLIK", 
+                    "number": "67", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 19, 
+                        "goals": 0, 
+                        "shots": 7
+                    }, 
+                    "dif": {
+                        "attempts": 2, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 21, 
+                        "goals": 1, 
+                        "shots": 13
+                    }, 
+                    "ratio": {
+                        "attempts": 0.525, 
+                        "goals": 1.0, 
+                        "shots": 0.65
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1070, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DERYK ENGELLAND", 
+                    "number": "29", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 19, 
+                        "goals": 0, 
+                        "shots": 7
+                    }, 
+                    "dif": {
+                        "attempts": 3, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 22, 
+                        "goals": 1, 
+                        "shots": 14
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5365853658536586, 
+                        "goals": 1.0, 
+                        "shots": 0.6666666666666666
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1077, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JOHNNY GAUDREAU", 
+                    "number": "13", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 20, 
+                        "goals": 0, 
+                        "shots": 8
+                    }, 
+                    "dif": {
+                        "attempts": 3, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 23, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5348837209302325, 
+                        "goals": 1.0, 
+                        "shots": 0.6521739130434783
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1131, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SAM BENNETT", 
+                    "number": "93", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 28, 
+                        "goals": 1, 
+                        "shots": 13
+                    }, 
+                    "dif": {
+                        "attempts": -4, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 24, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "ratio": {
+                        "attempts": 0.46153846153846156, 
+                        "goals": 0.5, 
+                        "shots": 0.5357142857142857
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1369, 
                 "type": "miss"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DOUGIE HAMILTON", 
+                    "number": "27", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 28, 
+                        "goals": 1, 
+                        "shots": 13
+                    }, 
+                    "dif": {
+                        "attempts": -3, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 25, 
+                        "goals": 1, 
+                        "shots": 16
+                    }, 
+                    "ratio": {
+                        "attempts": 0.4716981132075472, 
+                        "goals": 0.5, 
+                        "shots": 0.5517241379310345
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1415, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "BRETT KULAK", 
+                    "number": "61", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 28, 
+                        "goals": 1, 
+                        "shots": 13
+                    }, 
+                    "dif": {
+                        "attempts": -2, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 26, 
+                        "goals": 1, 
+                        "shots": 16
+                    }, 
+                    "ratio": {
+                        "attempts": 0.48148148148148145, 
+                        "goals": 0.5, 
+                        "shots": 0.5517241379310345
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1418, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MASON RAYMOND", 
+                    "number": "21", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 30, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "dif": {
+                        "attempts": -3, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 27, 
+                        "goals": 1, 
+                        "shots": 17
+                    }, 
+                    "ratio": {
+                        "attempts": 0.47368421052631576, 
+                        "goals": 0.5, 
+                        "shots": 0.53125
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1599, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DERYK ENGELLAND", 
+                    "number": "29", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 30, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "dif": {
+                        "attempts": -2, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 28, 
+                        "goals": 1, 
+                        "shots": 17
+                    }, 
+                    "ratio": {
+                        "attempts": 0.4827586206896552, 
+                        "goals": 0.5, 
+                        "shots": 0.53125
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1611, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JIRI HUDLER", 
+                    "number": "24", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 30, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "dif": {
+                        "attempts": -1, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 29, 
+                        "goals": 1, 
+                        "shots": 18
+                    }, 
+                    "ratio": {
+                        "attempts": 0.4915254237288136, 
+                        "goals": 0.5, 
+                        "shots": 0.5454545454545454
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1618, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 30, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 31, 
+                        "goals": 1, 
+                        "shots": 19
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5081967213114754, 
+                        "goals": 0.5, 
+                        "shots": 0.5588235294117647
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1625, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JOHNNY GAUDREAU", 
+                    "number": "13", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 30, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 31, 
+                        "goals": 1, 
+                        "shots": 19
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5081967213114754, 
+                        "goals": 0.5, 
+                        "shots": 0.5588235294117647
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1625, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "cap": "c", 
@@ -6017,106 +4397,110 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 62, 
-                        "goals": 3, 
-                        "shots": 29
+                        "attempts": 31, 
+                        "goals": 1, 
+                        "shots": 15
                     }, 
                     "dif": {
                         "attempts": 1, 
-                        "goals": 2
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 63, 
-                        "goals": 5, 
-                        "shots": 36
-                    }, 
-                    "ratio": {
-                        "attempts": 0.504, 
-                        "goals": 0.625, 
-                        "shots": 0.5538461538461539
-                    }
-                }, 
-                "strength": "PP", 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 3480, 
-                "type": "goal"
-            }, 
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "MICHEAL FERLAND", 
-                    "number": "79", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 62, 
-                        "goals": 3, 
-                        "shots": 29
-                    }, 
-                    "dif": {
-                        "attempts": 2, 
-                        "goals": 2
-                    }, 
-                    "for": {
-                        "attempts": 64, 
-                        "goals": 5, 
-                        "shots": 37
+                        "attempts": 32, 
+                        "goals": 1, 
+                        "shots": 20
                     }, 
                     "ratio": {
                         "attempts": 0.5079365079365079, 
-                        "goals": 0.625, 
-                        "shots": 0.5606060606060606
+                        "goals": 0.5, 
+                        "shots": 0.5714285714285714
                     }
                 }, 
                 "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 3551, 
+                "time": 1705, 
                 "type": "shot"
-            }
-        ], 
-        "goals": [
-            {
-                "against": {
-                    "abv": "EDM"
-                }, 
-                "shooter": {
-                    "name": "JOHNNY GAUDREAU", 
-                    "number": "13", 
-                    "pos": "L"
-                }, 
-                "stats": {
-                    "against": {
-                        "attempts": 26, 
-                        "goals": 2
-                    }, 
-                    "dif": {
-                        "attempts": -4, 
-                        "goals": -1
-                    }, 
-                    "for": {
-                        "attempts": 22, 
-                        "goals": 1
-                    }, 
-                    "ratio": {
-                        "attempts": 0.4583333333333333
-                    }
-                }, 
-                "team": {
-                    "abv": "CGY"
-                }, 
-                "time": 1390, 
-                "type": "goal"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 31, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "dif": {
+                        "attempts": 2, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 33, 
+                        "goals": 1, 
+                        "shots": 20
+                    }, 
+                    "ratio": {
+                        "attempts": 0.515625, 
+                        "goals": 0.5, 
+                        "shots": 0.5714285714285714
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1715, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SAM BENNETT", 
+                    "number": "93", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 31, 
+                        "goals": 1, 
+                        "shots": 15
+                    }, 
+                    "dif": {
+                        "attempts": 3, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 34, 
+                        "goals": 1, 
+                        "shots": 20
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5230769230769231, 
+                        "goals": 0.5, 
+                        "shots": 0.5714285714285714
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1725, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "name": "MATT STAJAN", 
@@ -6125,30 +4509,146 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 35, 
-                        "goals": 3
+                        "attempts": 34, 
+                        "goals": 1, 
+                        "shots": 18
                     }, 
                     "dif": {
-                        "attempts": 5, 
-                        "goals": -1
+                        "attempts": 1, 
+                        "goals": 0
                     }, 
                     "for": {
-                        "attempts": 40, 
-                        "goals": 2
+                        "attempts": 35, 
+                        "goals": 1, 
+                        "shots": 20
                     }, 
                     "ratio": {
-                        "attempts": 0.5333333333333333
+                        "attempts": 0.5072463768115942, 
+                        "goals": 0.5, 
+                        "shots": 0.5263157894736842
                     }
                 }, 
+                "strength": "PP", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 1972, 
-                "type": "goal"
+                "time": 1822, 
+                "type": "block"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "BRETT KULAK", 
+                    "number": "61", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 36, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 0, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 36, 
+                        "goals": 1, 
+                        "shots": 20
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 1918, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DAVID JONES", 
+                    "number": "19", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 36, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 37, 
+                        "goals": 1, 
+                        "shots": 21
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5068493150684932, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5121951219512195
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2021, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MICHAEL FROLIK", 
+                    "number": "67", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 37, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 1, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 38, 
+                        "goals": 1, 
+                        "shots": 22
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5066666666666667, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5238095238095238
+                    }
+                }, 
+                "strength": "SH", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2116, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "cap": "c", 
@@ -6158,30 +4658,73 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 40, 
-                        "goals": 3
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
                     }, 
                     "dif": {
-                        "attempts": 4, 
-                        "goals": 0
+                        "attempts": 1, 
+                        "goals": -1
                     }, 
                     "for": {
-                        "attempts": 44, 
-                        "goals": 3
+                        "attempts": 39, 
+                        "goals": 1, 
+                        "shots": 22
                     }, 
                     "ratio": {
-                        "attempts": 0.5238095238095238
+                        "attempts": 0.5064935064935064, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5238095238095238
                     }
                 }, 
+                "strength": "EV", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 2207, 
-                "type": "goal"
+                "time": 2241, 
+                "type": "miss"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 2, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 40, 
+                        "goals": 1, 
+                        "shots": 23
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5128205128205128, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5348837209302325
+                    }
+                }, 
+                "strength": "PP", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2300, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "name": "JOHNNY GAUDREAU", 
@@ -6190,30 +4733,147 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 43, 
-                        "goals": 3
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
                     }, 
                     "dif": {
-                        "attempts": 4, 
-                        "goals": 1
+                        "attempts": 3, 
+                        "goals": -1
                     }, 
                     "for": {
-                        "attempts": 47, 
-                        "goals": 4
+                        "attempts": 41, 
+                        "goals": 1, 
+                        "shots": 23
                     }, 
                     "ratio": {
-                        "attempts": 0.5222222222222223
+                        "attempts": 0.5189873417721519, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5348837209302325
                     }
                 }, 
+                "strength": "SH", 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 2368, 
-                "type": "goal"
+                "time": 2314, 
+                "type": "block"
             }, 
             {
                 "against": {
-                    "abv": "EDM"
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 4, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 42, 
+                        "goals": 1, 
+                        "shots": 23
+                    }, 
+                    "ratio": {
+                        "attempts": 0.525, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5348837209302325
+                    }
+                }, 
+                "strength": "SH", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2324, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JIRI HUDLER", 
+                    "number": "24", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 5, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 43, 
+                        "goals": 1, 
+                        "shots": 24
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5308641975308642, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5454545454545454
+                    }
+                }, 
+                "strength": "PP", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2343, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MICHEAL FERLAND", 
+                    "number": "79", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 6, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 44, 
+                        "goals": 1, 
+                        "shots": 25
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5365853658536586, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5555555555555556
+                    }
+                }, 
+                "strength": "PP", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2344, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
                 }, 
                 "shooter": {
                     "cap": "c", 
@@ -6223,62 +4883,987 @@ return {
                 }, 
                 "stats": {
                     "against": {
-                        "attempts": 62, 
-                        "goals": 3
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
                     }, 
                     "dif": {
-                        "attempts": 1, 
-                        "goals": 2
+                        "attempts": 7, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 45, 
+                        "goals": 1, 
+                        "shots": 25
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5421686746987951, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5555555555555556
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2396, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MICHAEL FROLIK", 
+                    "number": "67", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 8, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 46, 
+                        "goals": 1, 
+                        "shots": 26
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5476190476190477, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5652173913043478
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2445, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DAVID JONES", 
+                    "number": "19", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 9, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 47, 
+                        "goals": 1, 
+                        "shots": 27
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5529411764705883, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.574468085106383
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2501, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 38, 
+                        "goals": 2, 
+                        "shots": 20
+                    }, 
+                    "dif": {
+                        "attempts": 10, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 48, 
+                        "goals": 1, 
+                        "shots": 27
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5581395348837209, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.574468085106383
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2649, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DERYK ENGELLAND", 
+                    "number": "29", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 8, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 49, 
+                        "goals": 1, 
+                        "shots": 27
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5444444444444444, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5510204081632653
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2682, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DERYK ENGELLAND", 
+                    "number": "29", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 9, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 50, 
+                        "goals": 1, 
+                        "shots": 28
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5494505494505495, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.56
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2688, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "LANCE BOUMA", 
+                    "number": "17", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 10, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 51, 
+                        "goals": 1, 
+                        "shots": 28
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5543478260869565, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.56
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2696, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "c", 
+                    "name": "MARK GIORDANO", 
+                    "number": "5", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 11, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 52, 
+                        "goals": 1, 
+                        "shots": 29
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5591397849462365, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5686274509803921
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2730, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JIRI HUDLER", 
+                    "number": "24", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 12, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 53, 
+                        "goals": 1, 
+                        "shots": 30
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5638297872340425, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5769230769230769
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2754, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 13, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 54, 
+                        "goals": 1, 
+                        "shots": 31
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5684210526315789, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5849056603773585
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2757, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 14, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 55, 
+                        "goals": 1, 
+                        "shots": 32
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5729166666666666, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5925925925925926
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2767, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "BRETT KULAK", 
+                    "number": "61", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 15, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 56, 
+                        "goals": 1, 
+                        "shots": 32
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5773195876288659, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5925925925925926
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2816, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "c", 
+                    "name": "MARK GIORDANO", 
+                    "number": "5", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 16, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 57, 
+                        "goals": 1, 
+                        "shots": 32
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5816326530612245, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5925925925925926
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2879, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "c", 
+                    "name": "MARK GIORDANO", 
+                    "number": "5", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 17, 
+                        "goals": -1
+                    }, 
+                    "for": {
+                        "attempts": 58, 
+                        "goals": 1, 
+                        "shots": 32
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5858585858585859, 
+                        "goals": 0.3333333333333333, 
+                        "shots": 0.5925925925925926
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2884, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SEAN MONAHAN", 
+                    "number": "23", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2, 
+                        "shots": 22
+                    }, 
+                    "dif": {
+                        "attempts": 18, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 59, 
+                        "goals": 2, 
+                        "shots": 33
+                    }, 
+                    "ratio": {
+                        "attempts": 0.59, 
+                        "goals": 0.5, 
+                        "shots": 0.6
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2929, 
+                "type": "goal"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "DENNIS WIDEMAN", 
+                    "number": "6", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 42, 
+                        "goals": 2, 
+                        "shots": 23
+                    }, 
+                    "dif": {
+                        "attempts": 18, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 60, 
+                        "goals": 2, 
+                        "shots": 34
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5882352941176471, 
+                        "goals": 0.5, 
+                        "shots": 0.5964912280701754
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3191, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "BRETT KULAK", 
+                    "number": "61", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 42, 
+                        "goals": 2, 
+                        "shots": 23
+                    }, 
+                    "dif": {
+                        "attempts": 19, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 61, 
+                        "goals": 2, 
+                        "shots": 35
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5922330097087378, 
+                        "goals": 0.5, 
+                        "shots": 0.603448275862069
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3225, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "MASON RAYMOND", 
+                    "number": "21", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 44, 
+                        "goals": 2, 
+                        "shots": 25
+                    }, 
+                    "dif": {
+                        "attempts": 18, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 62, 
+                        "goals": 2, 
+                        "shots": 35
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5849056603773585, 
+                        "goals": 0.5, 
+                        "shots": 0.5833333333333334
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3375, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JIRI HUDLER", 
+                    "number": "24", 
+                    "pos": "R"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 44, 
+                        "goals": 2, 
+                        "shots": 25
+                    }, 
+                    "dif": {
+                        "attempts": 19, 
+                        "goals": 0
                     }, 
                     "for": {
                         "attempts": 63, 
-                        "goals": 5
+                        "goals": 2, 
+                        "shots": 35
                     }, 
                     "ratio": {
-                        "attempts": 0.504
+                        "attempts": 0.5887850467289719, 
+                        "goals": 0.5, 
+                        "shots": 0.5833333333333334
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3468, 
+                "type": "miss"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SEAN MONAHAN", 
+                    "number": "23", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 44, 
+                        "goals": 2, 
+                        "shots": 25
+                    }, 
+                    "dif": {
+                        "attempts": 20, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 64, 
+                        "goals": 2, 
+                        "shots": 36
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5925925925925926, 
+                        "goals": 0.5, 
+                        "shots": 0.5901639344262295
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3472, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JOHNNY GAUDREAU", 
+                    "number": "13", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 44, 
+                        "goals": 2, 
+                        "shots": 25
+                    }, 
+                    "dif": {
+                        "attempts": 21, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 65, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5963302752293578, 
+                        "goals": 0.5, 
+                        "shots": 0.5967741935483871
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3505, 
+                "type": "shot"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "cap": "A", 
+                    "name": "KRIS RUSSELL", 
+                    "number": "4", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 52, 
+                        "goals": 2, 
+                        "shots": 30
+                    }, 
+                    "dif": {
+                        "attempts": 14, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 66, 
+                        "goals": 2, 
+                        "shots": 37
+                    }, 
+                    "ratio": {
+                        "attempts": 0.559322033898305, 
+                        "goals": 0.5, 
+                        "shots": 0.5522388059701493
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3747, 
+                "type": "block"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JOHNNY GAUDREAU", 
+                    "number": "13", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 52, 
+                        "goals": 2, 
+                        "shots": 30
+                    }, 
+                    "dif": {
+                        "attempts": 15, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 67, 
+                        "goals": 3, 
+                        "shots": 38
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5630252100840336, 
+                        "goals": 0.6, 
+                        "shots": 0.5588235294117647
+                    }
+                }, 
+                "strength": "EV", 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3783, 
+                "type": "goal"
+            }
+        ], 
+        "goals": [
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "DOUGIE HAMILTON", 
+                    "number": "27", 
+                    "pos": "D"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 5, 
+                        "goals": 0
+                    }, 
+                    "dif": {
+                        "attempts": 4, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 9, 
+                        "goals": 1
+                    }, 
+                    "ratio": {
+                        "attempts": 0.6428571428571429
                     }
                 }, 
                 "team": {
                     "abv": "CGY"
                 }, 
-                "time": 3480, 
+                "time": 300, 
+                "type": "goal"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "SEAN MONAHAN", 
+                    "number": "23", 
+                    "pos": "C"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 41, 
+                        "goals": 2
+                    }, 
+                    "dif": {
+                        "attempts": 18, 
+                        "goals": 0
+                    }, 
+                    "for": {
+                        "attempts": 59, 
+                        "goals": 2
+                    }, 
+                    "ratio": {
+                        "attempts": 0.59
+                    }
+                }, 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 2929, 
+                "type": "goal"
+            }, 
+            {
+                "against": {
+                    "abv": "VAN"
+                }, 
+                "shooter": {
+                    "name": "JOHNNY GAUDREAU", 
+                    "number": "13", 
+                    "pos": "L"
+                }, 
+                "stats": {
+                    "against": {
+                        "attempts": 52, 
+                        "goals": 2
+                    }, 
+                    "dif": {
+                        "attempts": 15, 
+                        "goals": 1
+                    }, 
+                    "for": {
+                        "attempts": 67, 
+                        "goals": 3
+                    }, 
+                    "ratio": {
+                        "attempts": 0.5630252100840336
+                    }
+                }, 
+                "team": {
+                    "abv": "CGY"
+                }, 
+                "time": 3783, 
                 "type": "goal"
             }
         ], 
-        "number": 35, 
+        "number": 2, 
         "stats": {
             "goals": {
-                "1": 0, 
-                "2": 4, 
+                "1": 1, 
+                "2": 0, 
                 "3": 1, 
-                "4": 0, 
+                "4": 1, 
                 "5": 0, 
-                "reg": 5, 
-                "total": 5
+                "reg": 2, 
+                "total": 3
             }
         }, 
         "team": {
-            "abv": "CGY"
+            "abv": "CGY", 
+            "name": "CALGARY FLAMES"
         }
     }, 
-    "home": 1, 
+    "home": 0, 
     "ratio": {
         "goals": {
-            "1": 0, 
+            "1": 1, 
             "2": 0, 
             "3": 1, 
-            "4": 0, 
+            "4": 1, 
             "5": 0, 
             "reg": 0, 
             "total": 0
         }
     }, 
     "results": {
-        "gameLength": 3600, 
-        "type": "REG", 
+        "gameLength": 3900, 
+        "type": "OT", 
         "win": 1
     }, 
     "season": 2015
-}; 
+};
 }
-

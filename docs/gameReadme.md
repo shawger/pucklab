@@ -21,6 +21,21 @@ The graphics are designed so that hockey fans should be able to understand the g
 
 This is part of a larger project that will show this data for every NHL game. I am not covering how that works here, but for the page design it was important to make sure the graphics work for any regular season hockey game.
 
+#### Order of Elements
+
+The page has the following elements:
+
+- Title
+- Game Information (who played, what was the score, where was the game played)
+- Game Flow Chart
+- Game Stats Chart
+
+For title, clearly that goes first.
+
+Next I went with Game Information, because before looking at the graphics the users will need to know what game, between what teams they are looking at.
+
+Next I went with Game Flow Chart. At first I had Game Stats Chart, but I decided that the Game Flow chart should be higher because it is the focus of the page and the Game Stats Chart is supplementary information.
+
 ### Game Flow Chart
 
 The main graphic on the page.
@@ -41,6 +56,22 @@ Features:
 
  - Allow the user to zoom into different periods. As part of a user request, I made it so when a period is zoomed, the chart shifts so the initial difference in attempts is always 0 at the start of a period.
 
+#### Design Choices
+
+**Chart Type** A line chart was chosen because it shows the trend in attempts in a game over the length of a game. Points were added to the chart to show exactly when events (attempts) occurred and what they were (goals, shots, etc..).
+
+**Y Axis** I decided to use the y axis for time because time goes from 0-3600 while the attempts range from about 40 to -40. To better show this information it made more sense to give more room to time, and on webpages there is more room vertically (this is probably arguable, but the trend in web design seems to be pages have much bigger heights than widths). Having the y axis for time also lets me split the page in 2 halfs. Left for the for team and right for the against team.
+
+In addition, if time was son the y axis than one team one be above the other, and visually this would make it seem like one team was more important that the other team,
+
+**X Axis** I decided to have 0 (meaning attempts are even) run right down the middle of the page so it's easy to tell what team has the advantage when the line goes either side of center.
+
+**Goals** Goals are important game events so I gave them special treatment. By putting the larger circles on the graph it is easy to see when the goals happened. I used orientation and color to show who scored the goals.
+
+**Axis Ticks and Tooltips** I choose to keep axis ticks at a minimum so the graph didn't get busy. If a user wants some specific information on a goal or attempt, they can use a tooltip to find out more information.
+
+**Attempt Difference Median Line** I added lines to show the NHL median difference between attempts when a goal is scored, to give the graph some reference to an 'average' NHL game.
+
 ### Game Stat Summary Chart
 
 My main objective was building the game flow chart, but having summary stats (like how many total goals were scored) is also useful. Since I am learning and working with d3.js anyway, it made sense to show the game stats visually.
@@ -59,6 +90,18 @@ Stats To Include:
 - Goals
 - Shots
 - Attempts
+
+#### Design Choices
+
+**Chart Type** I went with bar graphs because they make it easy to compare stats side by side.
+
+**Chart Layout** In keeping with the theme of the page, I put stats for one team left of center and stats for the other team right of center. This way the user can easily go down the page and see what stats/events/scores/advantage is for what team.
+
+**Chart Axis** There are really 2 bar charts. One for the for team and one for the against team. The for team goes to the left and the against team goes to the left.
+
+I went with the category down the y Axis so I could show the stats for both teams beside each other.
+
+**Scaling** All stats are scaled 0-1 (0-100%) and graphed. This is done so stats for a team can be compared (eg how did a teams goals compare to the teams attempts)
 
 ### Data and Webserver
 

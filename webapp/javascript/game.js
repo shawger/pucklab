@@ -257,16 +257,91 @@ function drawGameGraph(data) {
     svg.append("text")
             .attr("text-anchor", "middle")
             .attr("transform", "translate("+ (width/4) +",-20)")
-            .text("<- " + data.for.team.abv + " Advantage")
+            .text("<- " + data.for.team.abv + " Attempt Advantage")
             .on('mouseover', attemptsTip.show)
             .on('mouseout', attemptsTip.hide);
 
     svg.append("text")
             .attr("text-anchor", "middle")
             .attr("transform", "translate("+ (width - (width/4)) +",-20)")
-            .text(data.against.team.abv + " Advantage ->")
+            .text(data.against.team.abv + " Attempt Advantage ->")
             .on('mouseover', attemptsTip.show)
             .on('mouseout', attemptsTip.hide);
+
+    // Labels for the y axis (the time)
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ (width+10) +","+(height/2)+")rotate(90)")
+            .text("<-Time (mins)->")
+
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ (0-10) +","+(height/2)+")rotate(270)")
+            .text("<-Time (mins)->")
+
+    // Add lines for when a team is expected to score
+
+    //Create a tool tip for the average for attempts
+    var avgForAttemptsTip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html("Median attempt difference at the<br>" +
+              "time of a goal in the NHL. When the <br>" +
+              "plot is left of this line, " + data.for.team.abv + " is more<br>" +
+              "likey to score.");
+
+    //Create a tool tip for the average against attempts
+    var avgAgainstAttemptsTip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html("Median attempt difference at the<br>" +
+              "time of a goal in the NHL. When the <br>" +
+              "plot is right of this line, " + data.against.team.abv + " is more<br>" +
+              "likey to score.");
+
+    svg.call(avgForAttemptsTip);
+    svg.call(avgAgainstAttemptsTip);
+
+    // For team
+    svg.append("line")
+        .attr("x1", x(2))  //<<== change your code here
+        .attr("y1", 0)
+        .attr("x2", x(2))  //<<== and here
+        .attr("y2", height)
+        .style("stroke-width", 1)
+        .style("fill", "none")
+        .attr("class", "forTeamAverage")
+        .on('mouseover', avgForAttemptsTip.show)
+        .on('mouseout', avgForAttemptsTip.hide);
+
+    // Against team
+    svg.append("line")
+        .attr("x1", x(-2))  //<<== change your code here
+        .attr("y1", 0)
+        .attr("x2", x(-2))  //<<== and here
+        .attr("y2", height)
+        .style("stroke-width", 1)
+        .style("fill", "none")
+        .attr("class", "againstTeamAverage")
+        .on('mouseover', avgAgainstAttemptsTip.show)
+        .on('mouseout', avgAgainstAttemptsTip.hide);
+
+    // Labels for the lines
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ x(2) +",-6)")
+            .text("MED(2)")
+            .attr("class", "axisTick")
+            .on('mouseover', avgForAttemptsTip.show)
+            .on('mouseout', avgForAttemptsTip.hide);
+
+    svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate("+ x(-2) +",-6)")
+            .text("MED(2)")
+            .attr("class", "axisTick")
+            .on('mouseover', avgAgainstAttemptsTip.show)
+            .on('mouseout', avgAgainstAttemptsTip.hide);
 
     // Add the statLine to the graph.
     var statLine = svg.append("path")
@@ -382,7 +457,7 @@ function drawGameGraph(data) {
     // Against Goals - Circles
     // Select the against goals circle containers.
     var againstNode = svg.selectAll("g againstCircles")
-        .data(data.against.goals)
+        .data(data.against.goals);
 
     // Draw the against goals circle containers.
     var againstNodeEnter = againstNode.enter()
@@ -626,6 +701,12 @@ function zoomGameGraph(data, start, end, x, y, width, height) {
     // Move the goal circles
     // Goals moved will be set to visible. Everything else will
     // be hidden.
+    var forText = svg.selectAll("g.forTeamGoal text")
+      .data(forGoals)
+      .text(function(d) {
+          return d.stats.for.goals
+      })
+
     var forCircles = svg.selectAll("g.forTeamGoal")
         .data(forGoals);
     forCircles.transition()
@@ -635,15 +716,24 @@ function zoomGameGraph(data, start, end, x, y, width, height) {
                 "," +
                 y(d.time) + ")";
         })
+
         .style("visibility", "visible")
         .duration(750);
     forCircles.exit()
         .transition()
         .style("visibility", "hidden");
 
+
+
     // Move against goals.
     // Goals moved will be set to visible. Everything else will
     // be hidden.
+    var againstText = svg.selectAll("g.againstTeamGoal text")
+      .data(againstGoals)
+      .text(function(d) {
+          return d.stats.against.goals
+      })
+
     var againstCircles = svg.selectAll("g.againstTeamGoal")
         .data(againstGoals);
     againstCircles.transition()
@@ -804,7 +894,7 @@ function statsGraph(data) {
         .attr("class", "bartext")
         .attr("text-anchor", "middle")
         .attr("y", function(d) {
-            return y(d.type) + y.bandwidth() - 2;
+            return y(d.type) + y.bandwidth() - 3;
         })
         .attr("x", function(d) {
           if (d.for) {
@@ -812,7 +902,7 @@ function statsGraph(data) {
           else{
             return graphWidth - (graphWidth / 4);}})
         .text(function(d) {
-            return d.total + "(" + d.ratio.toFixed(2) + ")";
+              return (d.ratio*100).toFixed(2)+ "% (" + d.total + ")";
         })
 
     // Add handlers to the period buttons to allow user to zoom to a
@@ -891,7 +981,7 @@ function zoomStats(data, start, end, x, y) {
         .data(statSums);
     stats.transition()
         .text(function(d) {
-            return d.total + "(" + d.ratio.toFixed(2) + ")";
+            return (d.ratio*100).toFixed(2)+ "% (" + d.total + ")";
         })
 }
 //#############################################
@@ -926,7 +1016,7 @@ function majorAxisLabels(time, gameLength) {
     } else if (time == gameLength) {
         return "END";
     } else if (time % 1200 == 0) {
-        return time / 1200 + " INT"
+        return time / 60
     }
 }
 

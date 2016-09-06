@@ -49,7 +49,9 @@ def Render(db, season, team, gameNum):
     p.nav = None
 
     # Set up the fields to get from the db
-    fields = ["for.team.abv",
+    fields = ["for.team.name",
+              "for.team.abv",
+              "against.team.name",
               "against.team.abv",
               "date",
               "home",

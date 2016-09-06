@@ -115,6 +115,32 @@ def currentStats(gameId, db, time):
         # Determine the stat dif
         stats['dif'][stat] =  stats['for'][stat] - stats['against'][stat]
 
+        if(stat == 'goals'):
+
+            start = int(time/1200)
+
+            end = time
+
+            forPl = countStatAtTimePeriod(gameId, "for", "attempts",start,end)
+            forResults = db.aggregate(forPl)
+
+            forCount = 0
+            results = list(forResults)
+            if(len(results) > 0):
+                forCount = results[0]['count']
+
+            againtPl = countStatAtTimePeriod(gameId, "against", "attempts",start,end)
+            againtResults = db.aggregate(againtPl)
+
+            againstCount = 0
+            results = list(againtResults)
+            if(len(results) > 0):
+                againstCount = results[0]['count']
+
+            print forCount - againstCount
+
+            stats['dif']['currentAttempts'] = forCount - againstCount
+
     return stats
 
 
@@ -216,7 +242,6 @@ def combineStatsDif(stat1, stat2):
 
 # Create a mongodb pipeline for retrieving  with certain stats by period
 
-
 def statInGamePipeline(id, forAgainst, stat):
 
     fieldName = forAgainst + "." + stat
@@ -254,6 +279,21 @@ def countStatAtTime(id, forAgainst, stat, time=3900):
                              fieldName: 1}},
                {"$match": {fieldName + ".time": {"$ne": 0}}},
                {"$match": {fieldName + ".time": {"$lte": time}}},
+               {"$group": {"_id": "null", "count": {"$sum": 1}}}]
+
+    return statsPL
+
+def countStatAtTimePeriod(id, forAgainst, stat, start, end):
+
+    fieldName = forAgainst + "." + stat
+    selector = "$" + fieldName
+
+    statsPL = [{"$match": {"_id": id}},
+               {"$unwind": selector},
+               {"$project": {"_id": 0,
+                             fieldName: 1}},
+               {"$match": {fieldName + ".time": {"$gte": start}}},
+               {"$match": {fieldName + ".time": {"$lte": end}}},
                {"$group": {"_id": "null", "count": {"$sum": 1}}}]
 
     return statsPL

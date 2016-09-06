@@ -7,6 +7,9 @@
 line.againstTeam {
   stroke: #f44336;
 }
+line.againstTeamAverage {
+  stroke: #ef9a9a;
+}
 .against-team {
   color: #b71c1c;
 }

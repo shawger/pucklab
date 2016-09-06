@@ -20,6 +20,7 @@ def Data(db, season, team, gameNum):
 
     # Fields to return from query
     moreFields = ["date",
+                    "for.team.name",
                     "against.team.abv",
                     "results.gameLength",
                     "results.win",

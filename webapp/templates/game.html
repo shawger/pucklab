@@ -1,9 +1,10 @@
 <!-- The game summary -->
 <h1>
-NHL Game Summary
+Using Attempts to Assess An NHL Team's Performance
+</h1>
+<h1>
 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#infoModal">Info</button>
 </h1>
-
 <!-- Modal for info -->
 <div id="infoModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -30,11 +31,11 @@ NHL Game Summary
 					<a href="https://www.nhl.com/news/primer-get-to-know-new-enhanced-stats-on-nhl-com/c-754260">
 					Read about advanced stats in the NHL.</a>
 				</p>
-				<p><b>Game Flow - </b> Here, game flow is represented by the difference of
-					attempts between teams. The idea is the greater difference between a teams
-					attempts and their opponents attempts means that team is playing better.
-					Usually (but not always) a bigger advantage in attempts will yield a bigger
-					advantage in goals, and thus a better chance at winning.
+				<p><b>Game Flow - </b> The median difference between a team's attempts and
+          their opponent's attempts when a team scores is 2. For that reason we
+          use attempts to show 'game flow'. When a team has an advantage in attempts
+          they are more likey to score goals and win games. On average, when a team
+          scores a goal they will have at least 2 more attempts than their opposition.
 				</p>
 				<p>
 					<b>Attempts - </b> An attempt is a goal, a shot, a missed shot or a shots
@@ -54,7 +55,7 @@ NHL Game Summary
 
 <div class = 'container game-summary'>
 	<div class = 'container row'>
-		<div class = 'col-xs-5 team-heading for-team'>
+		<div class = 'col-xs-4 team-heading for-team'>
 				{{data.for.team.abv}} -
 				{% if data.home==1 %}
     			HOME
@@ -63,12 +64,12 @@ NHL Game Summary
     			AWAY
     			{% endif %}
 		</div>
-		<div class = 'col-xs-2 centered'>
+		<div class = 'col-xs-4 centered'>
 
 		VS
 
 		</div>
-		<div class = 'col-xs-5 team-heading against-team'>
+		<div class = 'col-xs-4 team-heading against-team'>
 				{{data.against.team.abv}} -
 				{% if data.home==1 %}
     			AWAY
@@ -78,37 +79,54 @@ NHL Game Summary
     			{% endif %}
 		</div>
 	</div>
+  <div class = 'container row'>
+		<div class = 'col-xs-4 centered'>
+				{{data.for.team.name}}
+		</div>
+		<div class = 'col-xs-4 centered'>
+			{{data.date}}
+		</div>
+		<div class = 'col-xs-4 centered'>
+				{{data.against.team.name}}
+		</div>
+	</div>
 	<div class = 'container row'>
-		<div class = 'col-xs-5 centered'>
+		<div class = 'col-xs-4 centered'>
 				{% if data.results.win==1 %}
     			WIN
     			{% endif %}
     			{% if data.results.win==0 %}
     			LOSS
     			{% endif %}
-
-    			({{data.results.type}})
 		</div>
-		<div class = 'col-xs-2 centered'>
-			{{data.date}}
+		<div class = 'col-xs-4 centered'>
+      Decided In
 		</div>
-		<div class = 'col-xs-5 centered'>
+		<div class = 'col-xs-4 centered'>
 				{% if data.results.win==0 %}
     			WIN
     			{% endif %}
     			{% if data.results.win==1 %}
     			LOSS
     			{% endif %}
-
-    			({{data.results.type}})
 		</div>
 	</div>
 	<div class = 'container row'>
-		<div class = 'col-xs-5 centered'>{{data.for.stats.goals.total}}</div>
-		<div class = 'col-xs-2 centered'>
+		<div class = 'col-xs-4 centered'>{{data.for.stats.goals.total}}</div>
+		<div class = 'col-xs-4 centered'>
+
+      {% if data.results.type=="REG" %}
+      Regulation Time
+      {% endif %}
+      {% if data.results.type=="OT" %}
+      Overtime
+      {% endif %}
+      {% if data.results.type=="SO" %}
+      SShotout
+      {% endif %}
 
 		</div>
-		<div class = 'col-xs-5 centered'>{{data.against.stats.goals.total}}</div>
+		<div class = 'col-xs-4 centered'>{{data.against.stats.goals.total}}</div>
 
 	</div>
 
@@ -130,14 +148,26 @@ NHL Game Summary
 	      </div>
 	      <div class="modal-body">
 					<p>The game flow is a graph of the difference of attempts between the teams.</p>
-					<p>Attempts are a good way to gauge the flow of the game susing more
+					<p>Attempts are a good way to gauge the flow of the game using more
 					than just the score. Attempts have been proven to be a good predictor
 					of how teams will do over the course of a season.</p>
 
 					<p>Attempts are:</p>
 					<p>	goals + shots + misses + blocked shots</p>
-					<p>When the graph goes right, {{data.for.team.abv}} has the advantage.
-					When the graph goes left, {{data.against.team.abv}} has the advantage.</p>
+					<p>When the graph goes left, {{data.for.team.abv}} has the advantage.
+					When the graph goes right, {{data.against.team.abv}} has the advantage.</p>
+          <p> The median attempts by a team when they score is 2 (for the 2015-2016 season).
+          On the graph this is represented by lines at 2 on either side of the axis.
+          The lines</p>
+          <p><b>Goals</b></p>
+          <p> - Goals are represented by circles on the graph. {{data.for.team.abv}}'s goals
+            will be to the left of the line and {{data.for.team.abv}}'s color while
+            {{data.against.team.abv}}'s goals will be to the right of the line and
+            {{data.against.team.abv}}'s color.</p>
+          <p><b>Zooming</b></p>
+          <p> - When zoomed (picking a period or overtime) the graph will shift
+                so the attempt difference starts at 0. This is to provide a
+                better idea of what is happening in that period.</p>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -187,7 +217,7 @@ NHL Game Summary
 					<p>Game Stats are summaries of different stats for both teams.
 						For each stat the ratio of the stat vs the total stats is calculated.
 						For example:</p>
-					<p>for goal ratio = (for goals)/(for goals) + (against goals)</p>
+					<p>for goal ratio = (for goals)/((for goals) + (against goals))</p>
 					<p>The ratios are shown as bar graphs for both teams. The bars to
 						the left are for {{data.for.team.abv}} and the bar to the right
 						are for {{data.against.team.abv}}.</p>

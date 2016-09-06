@@ -7,6 +7,9 @@
 line.forTeam {
   stroke: #ff9800;
 }
+line.forTeamAverage {
+  stroke: #ffcc80;
+}
 .for-team {
   color: #e65100;
 }
